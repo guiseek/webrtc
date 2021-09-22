@@ -15,6 +15,7 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@webrtc/adapters": ["libs/adapters/src/index.ts"],
       "@webrtc/ports": ["libs/ports/src/index.ts"]
     }
   },
