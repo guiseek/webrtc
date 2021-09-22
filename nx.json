@@ -1,7 +1,7 @@
 {
   "npmScope": "webrtc",
   "affected": {
-    "defaultBase": "master"
+    "defaultBase": "main"
   },
   "implicitDependencies": {
     "package.json": {
