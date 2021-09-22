@@ -1,94 +1,294 @@
-
-
 # Webrtc
 
-This project was generated using [Nx](https://nx.dev).
+## Ports
 
-<p style="text-align: center;"><img src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-logo.png" width="450"></p>
+Biblioteca ports para abstrações
 
-🔎 **Smart, Extensible Build Framework**
+```sh
+nx generate @nrwl/workspace:library --name=ports
+```
 
-## Adding capabilities to your workspace
+### Diretórios
 
-Nx supports many plugins which add capabilities for developing different types of applications and different tools.
+```sh
+mkdir -p libs/ports/src/lib/enums
+mkdir -p libs/ports/src/lib/interfaces
+mkdir -p libs/ports/src/lib/types
+```
 
-These capabilities include generating applications, libraries, etc as well as the devtools to test, and build projects as well.
+### Arquivos
 
-Below are our core plugins:
+```sh
+touch libs/ports/src/lib/enums/signaling-events.ts
+touch libs/ports/src/lib/interfaces/peer-ui-state.ts
+touch libs/ports/src/lib/interfaces/signal-message.ts
+touch libs/ports/src/lib/interfaces/socket.ts
+touch libs/ports/src/lib/types/callback.ts
+touch libs/ports/src/lib/types/peer-event-callback.ts
+touch libs/ports/src/lib/types/peer-event-map.ts
+touch libs/ports/src/lib/types/peer-event.ts
+touch libs/ports/src/lib/peer.ts
+touch libs/ports/src/lib/signaling.ts
+```
 
-- [React](https://reactjs.org)
-  - `npm install --save-dev @nrwl/react`
-- Web (no framework frontends)
-  - `npm install --save-dev @nrwl/web`
-- [Angular](https://angular.io)
-  - `npm install --save-dev @nrwl/angular`
-- [Nest](https://nestjs.com)
-  - `npm install --save-dev @nrwl/nest`
-- [Express](https://expressjs.com)
-  - `npm install --save-dev @nrwl/express`
-- [Node](https://nodejs.org)
-  - `npm install --save-dev @nrwl/node`
+#### 
 
-There are also many [community plugins](https://nx.dev/community) you could add.
+Arquivo `libs/ports/src/lib/enums/signaling-events.ts`
+```ts
+export enum SignalingEvent {
+  KnockKnock = 'knock-knock',
+  Connection = 'connection',
+  Available = 'available',
+  Message = 'message',
+  Answer = 'answer',
+  Offer = 'offer',
+}
+```
 
-## Generate an application
+#### 
 
-Run `nx g @nrwl/react:app my-app` to generate an application.
+Arquivo `libs/ports/src/lib/interfaces/peer-ui-state.ts`
+```ts
+export interface PeerUiState {
+  audio: boolean
+  video: boolean
+}
+```
 
-> You can use any of the plugins above to generate applications as well.
+#### 
 
-When using Nx, you can create multiple applications and libraries in the same workspace.
+Arquivo `libs/ports/src/lib/interfaces/signal-message.ts`
+```ts
+export interface SignalMessage {
+  sdp: RTCSessionDescription;
+  ice: RTCIceCandidate;
+  meet: string;
+  user: string;
+}
+```
 
-## Generate a library
+#### 
 
-Run `nx g @nrwl/react:lib my-lib` to generate a library.
+Arquivo `libs/ports/src/lib/interfaces/socket.ts`
+```ts
+import { Callback } from '../types';
 
-> You can also use any of the plugins above to generate libraries as well.
+export interface Socket {
+  on<T>(evt: string, fn: Callback<T>): void;
+  emit<T>(evt: string, message: T): void;
+}
+```
 
-Libraries are shareable across libraries and applications. They can be imported from `@webrtc/mylib`.
+#### 
 
-## Development server
+Arquivo `libs/ports/src/lib/types/callback.ts`
+```ts
+export type Callback<T> = (value: T) => void;
+```
 
-Run `nx serve my-app` for a dev server. Navigate to http://localhost:4200/. The app will automatically reload if you change any of the source files.
+#### 
 
-## Code scaffolding
+Arquivo `libs/ports/src/lib/types/peer-event-callback.ts`
+```ts
+import { PeerEventMap } from './peer-event-map';
+import { PeerEvent } from './peer-event';
+import { Callback } from './callback';
 
-Run `nx g @nrwl/react:component my-component --project=my-app` to generate a new component.
+export type PeerEventCallback<K extends PeerEvent> = Map<
+  K,
+  Callback<PeerEventMap[K]>
+>;
+```
 
-## Build
+#### 
 
-Run `nx build my-app` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
+Arquivo `libs/ports/src/lib/types/peer-event-map.ts`
+```ts
+export type PeerEventMap = {
+  /**
+   * A nova mídia de entrada foi negociada para um
+   * determinado RTCRtpReceivere esse receptor track foi
+   * adicionado a quaisquer MediaStreams remotos associados.
+   */
+  track: MediaStreamTrack;
 
-## Running unit tests
+  /**
+   * Stream local disponível
+   */
+  stream: MediaStream;
 
-Run `nx test my-app` to execute the unit tests via [Jest](https://jestjs.io).
+  /**
+   * O estado de sinalização mudou. Essa mudança
+   * de estado é o resultado de um setLocalDescriptionou
+   * de setRemoteDescriptionser invocado.
+   */
+  signalingChange: RTCSignalingState;
 
-Run `nx affected:test` to execute the unit tests affected by a change.
+  /**
+   * A RTCPeerConnectionState mudou.
+   */
+  connectionChange: RTCPeerConnectionState;
 
-## Running end-to-end tests
+  /**
+   * Um novo RTCIceCandidate está disponível.
+   */
+  iceCandidateChange: RTCIceCandidate;
 
-Run `ng e2e my-app` to execute the end-to-end tests via [Cypress](https://www.cypress.io).
+  /**
+   * O estado ICE mudou.
+   */
+  iceGatheringChange: RTCIceGatheringState;
 
-Run `nx affected:e2e` to execute the end-to-end tests affected by a change.
-
-## Understand your workspace
-
-Run `nx dep-graph` to see a diagram of the dependencies of your projects.
-
-## Further help
-
-Visit the [Nx Documentation](https://nx.dev) to learn more.
+  /**
+   * O RTCPeerConnectionIceEvent da conexão ICE mudou.
+   */
+  iceConnectionChange: RTCPeerConnectionIceEvent;
 
 
+  /**
+   * Um novo RTCDataChannel é despachado para o script
+   * em resposta ao outro par criando um canal.
+   */
+  dataChannel: RTCDataChannel;
 
-## ☁ Nx Cloud
+  /**
+   * Um novo RTCDataChannel é despachado para o script
+   * em resposta ao outro par criando um canal.
+   */
+  data: ArrayBuffer | string;
+};
+```
 
-### Distributed Computation Caching & Distributed Task Execution
+#### 
 
-<p style="text-align: center;"><img src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-cloud-card.png"></p>
+Arquivo `libs/ports/src/lib/types/peer-event.ts`
+```ts
+import { PeerEventMap } from './peer-event-map'
 
-Nx Cloud pairs with Nx in order to enable you to build and test code more rapidly, by up to 10 times. Even teams that are new to Nx can connect to Nx Cloud and start saving time instantly.
+export type PeerEvent = keyof PeerEventMap;
+```
 
-Teams using Nx gain the advantage of building full-stack applications with their preferred framework alongside Nx’s advanced code generation and project dependency graph, plus a unified experience for both frontend and backend developers.
+#### 
 
-Visit [Nx Cloud](https://nx.app/) to learn more.
+Arquivo `libs/ports/src/lib/peer.ts`
+```ts
+import { Observable } from 'rxjs';
+
+import { PeerUiState, SignalMessage } from './interfaces';
+import { Callback, PeerEvent, PeerEventCallback, PeerEventMap } from './types';
+
+export abstract class Peer {
+  abstract uuid?: string;
+  abstract meet?: string;
+
+  abstract conn: RTCPeerConnection;
+
+  abstract stream: MediaStream;
+  abstract remote?: MediaStream;
+
+  abstract uiState: PeerUiState;
+
+  abstract receiveBuffer: ArrayBuffer[];
+  public abstract receivedSize: number;
+  public abstract progress$: Observable<number>;
+
+  abstract readonly events: PeerEventCallback<PeerEvent>;
+
+  public abstract on<K extends keyof PeerEventMap>(
+    key: K,
+    fn: Callback<PeerEventMap[K]>
+  ): void;
+
+  public abstract connect(uuid?: string): void;
+
+  public abstract send(message: string): void;
+
+  public abstract upload(message: File): void;
+
+  abstract signalUp(): Promise<void>
+
+  abstract listen(): void;
+
+  abstract gotStream(): (stream: MediaStream) => void;
+
+  abstract setDescription(): (value: RTCSessionDescriptionInit) => void;
+
+  abstract getSignalMessage(): (message: SignalMessage) => void;
+
+  abstract getIceCandidate(): (event: RTCPeerConnectionIceEvent) => void;
+
+  abstract onReceiveMessageCallback(event: MessageEvent<ArrayBuffer>): void;
+
+  abstract toggleAudio(stream: MediaStream): void
+
+  abstract toggleVideo(stream: MediaStream): void
+
+  abstract errorHandler(error: Event): void;
+
+  abstract close(): void;
+}
+```
+
+#### 
+
+Arquivo `libs/ports/src/lib/signaling.ts`
+```ts
+import { Socket, SignalMessage } from './interfaces';
+
+export abstract class Signaling<T extends Socket> {
+  abstract conn: T;
+
+  abstract on(event: string, fn: (message: SignalMessage) => void): void;
+
+  abstract of(meet: string, event: string, fn: (message: SignalMessage) => void): void;
+
+  abstract emit<T>(event: string, message: T): void;
+}
+```
+
+### Facilitar a exportação
+
+```ssh
+touch libs/ports/src/lib/enums/index.ts
+touch libs/ports/src/lib/interfaces/index.ts
+touch libs/ports/src/lib/types/index.ts
+
+```
+
+
+Em `touch libs/ports/src/lib/enums/index.ts`
+```sh
+export * from './signaling-events';
+```
+
+Em `touch libs/ports/src/lib/interfaces/index.ts`
+```sh
+export * from './peer-ui-state';
+export * from './signal-message';
+export * from './socket';
+```
+
+Em `touch libs/ports/src/lib/types/index.ts`
+```sh
+export * from './callback';
+export * from './peer-event-callback';
+export * from './peer-event-map';
+export * from './peer-event';
+```
+
+### API pública
+
+
+Em `libs/ports/src/index.ts`
+```sh
+export * from './lib/interfaces';
+export * from './lib/signaling';
+export * from './lib/enums';
+export * from './lib/types';
+export * from './lib/peer';
+```
+
+### 
+
+```sh
+```

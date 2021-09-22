@@ -1,6 +1,29 @@
 {
   "version": 2,
-  "projects": {},
+  "projects": {
+    "ports": {
+      "root": "libs/ports",
+      "sourceRoot": "libs/ports/src",
+      "projectType": "library",
+      "targets": {
+        "lint": {
+          "executor": "@nrwl/linter:eslint",
+          "outputs": ["{options.outputFile}"],
+          "options": {
+            "lintFilePatterns": ["libs/ports/**/*.ts"]
+          }
+        },
+        "test": {
+          "executor": "@nrwl/jest:jest",
+          "outputs": ["coverage/libs/ports"],
+          "options": {
+            "jestConfig": "libs/ports/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    }
+  },
   "cli": {
     "defaultCollection": "@nrwl/workspace"
   }
