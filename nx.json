@@ -30,6 +30,9 @@
     "adapters": {
       "tags": []
     },
+    "gateway": {
+      "tags": []
+    },
     "ports": {
       "tags": []
     }

@@ -645,3 +645,126 @@ export class PeerImpl implements Peer {
 ```sh
 rm libs/adapters/src/lib/adapters*
 ```
+
+
+```sh
+npm i -D @nrwl/angular @nrwl/nest
+```
+
+```sh
+npx nx g @nrwl/nest:init
+```
+
+
+## Signaling Gateway
+
+### Nosso app para comunicação inicial
+
+```sh
+nx generate @nrwl/nest:application --name=gateway
+```
+
+### Nosso gateway de sinalização
+
+```sh
+nx generate @nrwl/nest:gateway --name=signaling --project=gateway
+```
+
+### Mova para raíz do projeto o `app.module.ts`
+
+Mais específicamente `apps/gateway/src/app/app.module.ts` para o diretório `src` (1 para trás), ficando junto ao `main.ts` e `signaling.gateway.ts` que acabamos de criar.
+
+O que restar no diretório app pode ser apagado.
+
+### Instale estes pacotes
+
+```sh
+npm i @nestjs/websockets@^7 @nestjs/platform-socket.io@^7
+```
+
+Então ficaremos desta forma
+
+Arquivo: `apps/gateway/src/main.ts`
+```ts
+import { Logger } from '@nestjs/common';
+import { NestFactory } from '@nestjs/core';
+
+import { AppModule } from './app.module';
+
+(async () => {
+  const app = await NestFactory.create(AppModule);
+  const port = process.env.PORT || 3333;
+  await app.listen(port, () => {
+    Logger.log('Listening at http://localhost:' + port);
+  });
+})()
+```
+
+Arquivo: `apps/gateway/src/app.module.ts`
+```ts
+import { SignalingGateway } from './signaling.gateway';
+import { Module } from '@nestjs/common';
+
+@Module({
+  providers: [SignalingGateway],
+})
+export class AppModule {}
+```
+
+Arquivo: `apps/gateway/src/signaling.gateway.ts`
+```ts
+import {
+  MessageBody,
+  ConnectedSocket,
+  OnGatewayConnection,
+  SubscribeMessage,
+  WebSocketGateway,
+  WebSocketServer,
+} from '@nestjs/websockets';
+import { SignalingEvent, SignalMessage } from '@webrtc/ports';
+import { Server, Socket } from 'socket.io';
+
+
+@WebSocketGateway({ cors: true })
+export class SignalingGateway implements OnGatewayConnection {
+  @WebSocketServer()
+  private server: Server;
+
+  handleConnection(@ConnectedSocket() client: Socket) {
+    client.emit(SignalingEvent.Connection, { id: client.id });
+  }
+
+  @SubscribeMessage(SignalingEvent.KnockKnock)
+  knockKnock(
+    @ConnectedSocket() contact: Socket,
+    @MessageBody() payload: SignalMessage
+  ) {
+    const room = this.takeOrStartRoom(payload);
+    if (room.length >= 0 && room.length < 5) {
+      console.log(payload);
+      
+      contact.emit(SignalingEvent.Available, true);
+    } else {
+      contact.emit(SignalingEvent.Available, false);
+    }
+  }
+
+  @SubscribeMessage(SignalingEvent.Message)
+  onMessage(
+    @ConnectedSocket() socket: Socket,
+    @MessageBody() payload: SignalMessage
+  ) {
+    if (socket.rooms.has(payload.meet)) {
+      socket.to(payload.meet).emit('message', payload);
+    } else {
+      socket.join(payload.meet);
+      socket.broadcast.emit('message', payload);
+    }
+  }
+
+  private takeOrStartRoom({ meet }: SignalMessage) {
+    const adapter = this.server.sockets.adapter;
+    return adapter.rooms[meet] ?? { length: 0 };
+  }
+}
+```
