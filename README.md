@@ -1,6 +1,47 @@
+ 1. [Ports](#Ports)
+	* 1.1. [Diretórios](#Diretrios)
+	* 1.2. [Arquivos](#Arquivos)
+		* 1.2.1. [Nossos eventos de sinalização](#Nossoseventosdesinalizao)
+		* 1.2.2. [O estado da nossa comunicação](#Oestadodanossacomunicao)
+		* 1.2.3. [Nossa mensagem de sinalização](#Nossamensagemdesinalizao)
+		* 1.2.4. [O mensageiro da nossa sinalização](#Omensageirodanossasinalizao)
+		* 1.2.5. [Nossa função de retorno em eventos](#Nossafunoderetornoemeventos)
+		* 1.2.6. [Indica quem é a função de retorno pelo nome do evento](#Indicaquemafunoderetornopelonomedoevento)
+		* 1.2.7. [Todas possibilidades de eventos e o tipo de seu respectivo retorno](#Todaspossibilidadesdeeventoseotipodeseurespectivoretorno)
+		* 1.2.8. [Nossos eventos](#Nossoseventos)
+		* 1.2.9. [Tudo que precisaremos em cada ponta](#Tudoqueprecisaremosemcadaponta)
+		* 1.2.10. [Como nos comunicaremos](#Comonoscomunicaremos)
+	* 1.3. [API pública](#APIpblica)
+2. [Adapters](#Adapters)
+	* 2.1. [Arquivos](#Arquivos-1)
+	* 2.2. [Signaling](#Signaling)
+	* 2.3. [Oscilloscope](#Oscilloscope)
+	* 2.4. [Peer](#Peer)
+	* 2.5. [API pública](#APIpblica-1)
+3. [Gateway](#Gateway)
+	* 3.1. [Inicialize o plugin nx nest](#Inicializeopluginnxnest)
+	* 3.2. [Nosso app para comunicação inicial](#Nossoappparacomunicaoinicial)
+	* 3.3. [Nosso gateway de sinalização](#Nossogatewaydesinalizao)
+	* 3.4. [Mova para raiz do projeto](#Movapararaizdoprojeto)
+4. [Web App](#WebApp)
+	* 4.1. [Inicialize o plugin nx angular](#Inicializeopluginnxangular)
+	* 4.2. [Gerando o aplicativo](#Gerandooaplicativo)
+	* 4.3. [Home](#Home)
+	* 4.4. [Config](#Config)
+		* 4.4.1. [Guard](#Guard)
+		* 4.4.2. [Component](#Component)
+	* 4.5. [Meet](#Meet)
+	* 4.6. [App Routing](#AppRouting)
+	* 4.7. [App](#App)
+		* 4.7.1. [Module](#Module)
+		* 4.7.2. [Component](#Component-1)
+	* 4.8. [Styles](#Styles)
+		* 4.8.1. [Typography](#Typography)
+	* 4.9. [Index HTML](#IndexHTML)
+
 # Webrtc
 
-## Ports
+##  1. <a name='Ports'></a>Ports
 
 Biblioteca ports para abstrações
 
@@ -8,7 +49,7 @@ Biblioteca ports para abstrações
 nx generate @nrwl/workspace:library --name=ports
 ```
 
-### Diretórios
+###  1.1. <a name='Diretrios'></a>Diretórios
 
 ```sh
 mkdir -p libs/ports/src/lib/enums
@@ -16,7 +57,7 @@ mkdir -p libs/ports/src/lib/interfaces
 mkdir -p libs/ports/src/lib/types
 ```
 
-### Arquivos
+###  1.2. <a name='Arquivos'></a>Arquivos
 
 ```sh
 touch libs/ports/src/lib/enums/signaling-events.ts
@@ -31,7 +72,7 @@ touch libs/ports/src/lib/peer.ts
 touch libs/ports/src/lib/signaling.ts
 ```
 
-#### Nossos eventos de sinalização
+####  1.2.1. <a name='Nossoseventosdesinalizao'></a>Nossos eventos de sinalização
 
 Arquivo `libs/ports/src/lib/enums/signaling-events.ts`
 ```ts
@@ -45,7 +86,7 @@ export enum SignalingEvent {
 }
 ```
 
-#### O estado da nossa comunicação
+####  1.2.2. <a name='Oestadodanossacomunicao'></a>O estado da nossa comunicação
 
 Arquivo `libs/ports/src/lib/interfaces/peer-ui-state.ts`
 ```ts
@@ -55,7 +96,7 @@ export interface PeerUiState {
 }
 ```
 
-#### Nossa mensagem de sinalização
+####  1.2.3. <a name='Nossamensagemdesinalizao'></a>Nossa mensagem de sinalização
 
 Arquivo `libs/ports/src/lib/interfaces/signal-message.ts`
 ```ts
@@ -67,7 +108,7 @@ export interface SignalMessage {
 }
 ```
 
-#### O mensageiro da nossa sinalização
+####  1.2.4. <a name='Omensageirodanossasinalizao'></a>O mensageiro da nossa sinalização
 
 Arquivo `libs/ports/src/lib/interfaces/socket.ts`
 ```ts
@@ -79,14 +120,14 @@ export interface Socket {
 }
 ```
 
-#### Nossa função de retorno em eventos
+####  1.2.5. <a name='Nossafunoderetornoemeventos'></a>Nossa função de retorno em eventos
 
 Arquivo `libs/ports/src/lib/types/callback.ts`
 ```ts
 export type Callback<T> = (value: T) => void;
 ```
 
-#### Indica quem é a função de retorno pelo nome do evento
+####  1.2.6. <a name='Indicaquemafunoderetornopelonomedoevento'></a>Indica quem é a função de retorno pelo nome do evento
 
 Arquivo `libs/ports/src/lib/types/peer-event-callback.ts`
 ```ts
@@ -100,7 +141,7 @@ export type PeerEventCallback<K extends PeerEvent> = Map<
 >;
 ```
 
-#### Todas possibilidades de eventos e o tipo de seu respectivo retorno
+####  1.2.7. <a name='Todaspossibilidadesdeeventoseotipodeseurespectivoretorno'></a>Todas possibilidades de eventos e o tipo de seu respectivo retorno
 
 Arquivo `libs/ports/src/lib/types/peer-event-map.ts`
 ```ts
@@ -159,7 +200,7 @@ export type PeerEventMap = {
 };
 ```
 
-#### Nossos eventos
+####  1.2.8. <a name='Nossoseventos'></a>Nossos eventos
 
 Arquivo `libs/ports/src/lib/types/peer-event.ts`
 ```ts
@@ -168,7 +209,7 @@ import { PeerEventMap } from './peer-event-map'
 export type PeerEvent = keyof PeerEventMap;
 ```
 
-#### Tudo que precisaremos em cada ponta
+####  1.2.9. <a name='Tudoqueprecisaremosemcadaponta'></a>Tudo que precisaremos em cada ponta
 
 Arquivo `libs/ports/src/lib/peer.ts`
 ```ts
@@ -229,7 +270,7 @@ export abstract class Peer {
 }
 ```
 
-#### Como nos comunicaremos
+####  1.2.10. <a name='Comonoscomunicaremos'></a>Como nos comunicaremos
 
 Arquivo `libs/ports/src/lib/signaling.ts`
 ```ts
@@ -246,7 +287,7 @@ export abstract class Signaling<T extends Socket> {
 }
 ```
 
-### Facilitar a exportação
+##### Barrel files
 
 ```sh
 touch libs/ports/src/lib/enums/index.ts
@@ -276,7 +317,7 @@ export * from './peer-event-map';
 export * from './peer-event';
 ```
 
-### API pública
+###  1.3. <a name='APIpblica'></a>API pública
 
 
 Em `libs/ports/src/index.ts`
@@ -288,14 +329,13 @@ export * from './lib/types';
 export * from './lib/peer';
 ```
 
-## Step 2
-### Biblioteca adapters
+##  2. <a name='Adapters'></a>Adapters
 
 ```sh
 nx generate @nrwl/workspace:library --name=adapters --strict
 ```
 
-#### Arquivos
+###  2.1. <a name='Arquivos-1'></a>Arquivos
 ```sh
 touch libs/adapters/src/lib/signaling.impl.ts
 touch libs/adapters/src/lib/peer.impl.ts
@@ -306,7 +346,7 @@ touch libs/adapters/src/lib/utils/draw-oscilloscope.ts
 rm libs/adapters/src/lib/adapters*
 ```
 
-##### Signaling 
+###  2.2. <a name='Signaling'></a>Signaling 
 
 Em `libs/adapters/src/lib/signaling.impl.ts`
 ```ts
@@ -335,7 +375,7 @@ export class SignalingImpl implements Signaling<Socket> {
 ```
 
 
-##### Oscilloscope
+###  2.3. <a name='Oscilloscope'></a>Oscilloscope
 
 Arquivo `libs/adapters/src/lib/utils/draw-oscilloscope.ts`
 ```ts
@@ -399,7 +439,7 @@ export function drawOscilloscope(
 }
 ```
 
-##### Peer
+###  2.4. <a name='Peer'></a>Peer
 
 Arquivo `libs/adapters/src/lib/peer.impl.ts`
 ```ts
@@ -713,7 +753,7 @@ export class PeerImpl implements Peer {
 }
 ```
 
-##### Export adapters
+###  2.5. <a name='APIpblica-1'></a>API pública
 Em `libs/adapters/src/index.ts`
 ```ts
 export * from './lib/utils/draw-oscilloscope';
@@ -721,42 +761,39 @@ export * from './lib/signaling.impl';
 export * from './lib/peer.impl';
 ```
 
-
+---
 
 ```sh
 npm i -D @nrwl/angular @nrwl/nest
 ```
 
+
+
+##  3. <a name='Gateway'></a>Gateway
+
+###  3.1. <a name='Inicializeopluginnxnest'></a>Inicialize o plugin nx nest
+
 ```sh
 npx nx g @nrwl/nest:init
 ```
 
-
-## Signaling Gateway
-
-### Nosso app para comunicação inicial
+###  3.2. <a name='Nossoappparacomunicaoinicial'></a>Nosso app para comunicação inicial
 
 ```sh
 nx generate @nrwl/nest:application --name=gateway
 ```
 
-### Nosso gateway de sinalização
+###  3.3. <a name='Nossogatewaydesinalizao'></a>Nosso gateway de sinalização
 
 ```sh
 nx generate @nrwl/nest:gateway --name=signaling --project=gateway
 ```
 
-### Mova para raiz do projeto
+###  3.4. <a name='Movapararaizdoprojeto'></a>Mova para raiz do projeto
 
 Move o arquivo `apps/gateway/src/app/app.module.ts` para o diretório `src` (1 para trás), ficando junto ao `main.ts` e `signaling.gateway.ts` que acabamos de criar.
 
 O que restar no diretório `app` pode ser apagado.
-
-### Instale estes pacotes
-
-```sh
-npm i @nestjs/websockets@^7 @nestjs/platform-socket.io@^7
-```
 
 Então ficaremos desta forma
 
@@ -845,13 +882,16 @@ export class SignalingGateway implements OnGatewayConnection {
 }
 ```
 
-### Web App
+##  4. <a name='WebApp'></a>Web App
+
+
+###  4.1. <a name='Inicializeopluginnxangular'></a>Inicialize o plugin nx angular
 
 ```sh
 npx nx g @nrwl/angular:init
 ```
 
-#### Se ainda estiver configurado como nest, troque para angular, como mostrado abaixo
+Se ainda estiver configurado como nest, troque para angular, como mostrado abaixo
 
 Arquivo: `workspace.json`
 ```sh
@@ -866,58 +906,13 @@ Arquivo: `workspace.json`
 },
 ```
 
+###  4.2. <a name='Gerandooaplicativo'></a>Gerando o aplicativo
+
 ```sh
 nx generate @nrwl/angular:application --name=webapp --backendProject=gateway --e2eTestRunner=none --routing
-
-```sh
-npm i @angular/material @angular/cdk
 ```
 
-#### App Module
-
-```ts
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MatAutocompleteModule } from '@angular/material/autocomplete';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatButtonModule } from '@angular/material/button';
-import { MatDialogModule } from '@angular/material/dialog';
-import { MatSelectModule } from '@angular/material/select';
-import { BrowserModule } from '@angular/platform-browser';
-import { MatInputModule } from '@angular/material/input';
-import { HttpClientModule } from '@angular/common/http';
-import { MatIconModule } from '@angular/material/icon';
-import { ReactiveFormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
-import { NgModule } from '@angular/core';
-
-import { ConfigComponent } from './config/config.component';
-import { HomeComponent } from './home/home.component';
-import { AppComponent } from './app.component';
-
-@NgModule({
-  declarations: [AppComponent, ConfigComponent, HomeComponent],
-  imports: [
-    BrowserModule,
-    MatIconModule,
-    MatInputModule,
-    MatButtonModule,
-    MatSelectModule,
-    MatDialogModule,
-    HttpClientModule,
-    MatFormFieldModule,
-    ReactiveFormsModule,
-    MatAutocompleteModule,
-    BrowserAnimationsModule,
-    RouterModule.forRoot([{ path: 'meet', loadChildren: () => import('./meet/meet.module').then(m => m.MeetModule) }], { initialNavigation: 'enabledBlocking' }),
-  ],
-  providers: [],
-  bootstrap: [AppComponent],
-})
-export class AppModule {}
-
-```
-
-#### Home
+###  4.3. <a name='Home'></a>Home
 
 ```sh
 nx g c home --project webapp
@@ -1018,15 +1013,7 @@ Arquivo: `apps/webapp/src/app/home/home.component.html`
 </form>
 ```
 
-
-```sh
-nx g m meet --route meet --module app --project webapp
-```
-
-```sh
-nx g g meet/meet --project webapp
-# Enter em branco
-```
+###  4.4. <a name='Config'></a>Config
 
 ```sh
 nx g c config --module app --project webapp
@@ -1093,7 +1080,7 @@ export function uuid() {
 }
 ```
 
-### Config Guard
+####  4.4.1. <a name='Guard'></a>Guard
 
 Arquivo: `apps/webapp/src/app/config/config.guard.ts`
 ```ts
@@ -1144,7 +1131,7 @@ export class ConfigGuard implements CanActivate {
 }
 ```
 
-### Config
+####  4.4.2. <a name='Component'></a>Component
 
 Arquivo: `apps/webapp/src/app/config/config.component.ts`
 ```ts
@@ -1320,13 +1307,22 @@ Arquivo: `apps/webapp/src/app/config/config.component.html`
 ```
 
 
-#### Meet
+
+###  4.5. <a name='Meet'></a>Meet
+
+Gerando o componente
+
+```sh
+nx g m meet --route meet --module app --project webapp
+```
+
+##### Component
 
 Arquivo: `apps/webapp/src/app/meet/meet.component.ts`
 ```ts
 import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-// import { drawOscilloscope } from '@webrtc/adapters';
+import { drawOscilloscope } from '@webrtc/adapters';
 import { Peer } from '@webrtc/ports';
 
 
@@ -1372,7 +1368,7 @@ export class MeetComponent implements OnInit, AfterViewInit {
       const analyser = audioCtx.createAnalyser();
 
       const style = { fill: '#fff', stroke: '#00bb77' };
-      // drawOscilloscope(this.audioCanvas, analyser, style);
+      drawOscilloscope(this.audioCanvas, analyser, style);
 
       source.connect(analyser);
       analyser.connect(audioCtx.destination);
@@ -1575,6 +1571,14 @@ Arquivo: `apps/webapp/src/app/meet/meet.component.html`
 </ng-container>
 ```
 
+##### Guard
+
+```sh
+nx g g meet/meet --project webapp
+# Enter em branco
+```
+
+
 Arquivo: `apps/webapp/src/app/meet/meet.guard.ts`
 ```ts
 import { Injectable } from '@angular/core';
@@ -1632,6 +1636,8 @@ export class MeetGuard implements CanActivate {
   }
 }
 ```
+##### Module
+
 
 Arquivo: `apps/webapp/src/app/meet/meet.module.ts`
 ```ts
@@ -1678,7 +1684,7 @@ const routes: Routes = [
 export class MeetModule { }
 ```
 
-#### App Routing
+###  4.6. <a name='AppRouting'></a>App Routing
 
 ```sh
 nx g m app-routing --flat --project webapp
@@ -1715,26 +1721,79 @@ import { HomeComponent } from './home/home.component';
 export class AppRoutingModule { }
 ```
 
+###  4.7. <a name='App'></a>App
 
 
-#### Home
+####  4.7.1. <a name='Module'></a>Module
 
-```sh
-nx g c home --project webapp
-```
-
-Arquivo: `apps/webapp/src/app/home/home.component.ts`
 ```ts
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatSelectModule } from '@angular/material/select';
+import { BrowserModule } from '@angular/platform-browser';
+import { MatInputModule } from '@angular/material/input';
+import { HttpClientModule } from '@angular/common/http';
+import { MatIconModule } from '@angular/material/icon';
+import { ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { NgModule } from '@angular/core';
+
+import { ConfigComponent } from './config/config.component';
+import { HomeComponent } from './home/home.component';
+import { AppComponent } from './app.component';
+
+@NgModule({
+  declarations: [AppComponent, ConfigComponent, HomeComponent],
+  imports: [
+    BrowserModule,
+    MatIconModule,
+    MatInputModule,
+    MatButtonModule,
+    MatSelectModule,
+    MatDialogModule,
+    HttpClientModule,
+    MatFormFieldModule,
+    ReactiveFormsModule,
+    MatAutocompleteModule,
+    BrowserAnimationsModule,
+    RouterModule.forRoot([{ path: 'meet', loadChildren: () => import('./meet/meet.module').then(m => m.MeetModule) }], { initialNavigation: 'enabledBlocking' }),
+  ],
+  providers: [],
+  bootstrap: [AppComponent],
+})
+export class AppModule {}
+
 ```
 
-Arquivo: `apps/webapp/src/app/home/home.component.scss`
+####  4.7.2. <a name='Component-1'></a>Component
+
+Arquivo `apps/webapp/src/app/app.scss`
 ```scss
+:host {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  main {
+    flex: 1;
+    width: 100%;
+    display: flex;
+  }
+
+  background-color: #00bb77;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cpolygon fill='%23000' fill-opacity='.1' points='120 0 120 60 90 30 60 0 0 0 0 0 60 60 0 120 60 120 90 90 120 60 120 0'/%3E%3C/svg%3E");
+}
 ```
 
-Arquivo: `apps/webapp/src/app/home/home.component.html`
-```html
-```
+###  4.8. <a name='Styles'></a>Styles
 
+####  4.8.1. <a name='Typography'></a>Typography
 
 Arquivo: `apps/webapp/src/theming/typografy`
 ```scss
@@ -1836,26 +1895,20 @@ Arquivo: `apps/webapp/src/theming/typografy`
 }
 ```
 
+##### styles.scss
+
+
 Arquivo: `apps/webapp/src/styles.scss`
 ```scss
 @use '~@angular/material' as mat;
 
 @import './theming/typografy';
 
-// Plus imports for other components in your app.
-// Include the common styles for Angular Material. We include this here so that you only
-// have to load a single css file for Angular Material in your app.
-// Be sure that you only ever include this mixin once!
 @include mat.core();
-// Define the palettes for your theme using the Material Design palettes available in palette.scss
-// (imported above). For each palette, you can optionally specify a default, lighter, and darker
-// hue. Available color palettes: https://material.io/design/color/
+
 $works-primary: mat.define-palette(mat.$purple-palette);
 $works-accent: mat.define-palette(mat.$cyan-palette);
-// The warn palette is optional (defaults to red).
 $works-warn: mat.define-palette(mat.$red-palette);
-// Create the theme object. A theme consists of configurations for individual
-// theming systems such as "color" or "typography".
 $works-theme: mat.define-light-theme(
   (
     color: (
@@ -1865,10 +1918,6 @@ $works-theme: mat.define-light-theme(
     ),
   )
 );
-// Include theme styles for core and each component used in your app.
-// Alternatively, you can import and @include the theme mixins for each component
-// that you are using.
-// @include mat.all-component-themes($works-theme);
 @include mat.core-theme($works-theme);
 @include mat.icon-theme($works-theme);
 @include mat.card-theme($works-theme);
@@ -1894,35 +1943,26 @@ body {
 }
 ```
 
+###  4.9. <a name='IndexHTML'></a>Index HTML
+
 Arquivo: `apps/webapp/src/index.html`
-```scss
+```html
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="utf-8" />
+    <title>Webapp</title>
+    <base href="/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/x-icon" href="favicon.ico" />
     <link rel="preconnect" href="https://fonts.gstatic.com" />
     <link
       rel="stylesheet"
       href="https://fonts.googleapis.com/icon?family=Material+Icons"
     />
-```
-
-
-### App
-
-Arquivo ``
-```scss
-:host {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-
-  main {
-    flex: 1;
-    width: 100%;
-    display: flex;
-  }
-
-  background-color: #00bb77;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cpolygon fill='%23000' fill-opacity='.1' points='120 0 120 60 90 30 60 0 0 0 0 0 60 60 0 120 60 120 90 90 120 60 120 0'/%3E%3C/svg%3E");
-}
+  </head>
+  <body>
+    <webrtc-root></webrtc-root>
+  </body>
+</html>
 ```
