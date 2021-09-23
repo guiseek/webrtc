@@ -1,0 +1,13 @@
+:host {
+  display: flex;
+  flex-direction: column;
+
+  .container {
+    width: 410px;
+    overflow: hidden;
+
+    video, audio {
+      max-width: 100%;
+    }
+  }
+}

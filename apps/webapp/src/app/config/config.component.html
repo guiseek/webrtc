@@ -1,0 +1,62 @@
+<h3 mat-dialog-title>Configuração</h3>
+
+<form [formGroup]="deviceConfig">
+  <mat-form-field appearance="fill">
+    <mat-label>Câmera</mat-label>
+    <mat-select
+      formControlName="video"
+      [compareWith]="compareWith"
+      (selectionChange)="onVideoChange($event.value)"
+    >
+      <mat-option>- Sem câmera -</mat-option>
+      <mat-option *ngFor="let d of video$ | async" [value]="d">
+        {{ d.label }}
+      </mat-option>
+    </mat-select>
+    <mat-error *ngIf="deviceConfig.get('video')?.invalid">
+      Por favor, selecione uma câmera
+    </mat-error>
+    <mat-hint>Selecione sua câmera</mat-hint>
+  </mat-form-field>
+  <video
+    muted
+    autoplay
+    playsinline
+    poster="assets/camera.svg"
+    [srcObject]="streamConfig.video"
+  ></video>
+
+  <mat-form-field appearance="fill">
+    <mat-label>Microfone</mat-label>
+    <mat-select
+      formControlName="audio"
+      [compareWith]="compareWith"
+      (selectionChange)="onAudioChange($event.value)"
+    >
+      <mat-option>- Sem microfone -</mat-option>
+      <mat-option *ngFor="let d of audio$ | async" [value]="d">
+        {{ d.label }}
+      </mat-option>
+    </mat-select>
+    <mat-error *ngIf="deviceConfig.get('audio')?.invalid">
+      Por favor, selecione um microfone
+    </mat-error>
+    <mat-hint>Selecione seu microfone</mat-hint>
+  </mat-form-field>
+
+  <div class="container" *ngIf="streamConfig.audio">
+    <audio autoplay playsinline [srcObject]="streamConfig.audio"></audio>
+  </div>
+</form>
+
+<footer mat-dialog-actions align="end">
+  <button
+    type="button"
+    mat-stroked-button
+    [disabled]="deviceConfig.invalid"
+    [mat-dialog-close]="deviceConfig.valid"
+    [color]="deviceConfig.valid ? 'accent' : 'default'"
+  >
+    Salvar e entrar
+  </button>
+</footer>

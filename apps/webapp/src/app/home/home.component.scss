@@ -1,0 +1,38 @@
+:host {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  form {
+    gap: 16px;
+
+    .mat-form-field {
+      width: 100%;
+    }
+
+    section {
+      display: flex;
+      flex-direction: row;
+      margin-top: 8px;
+
+      .mat-form-field {
+        width: 260px;
+      }
+
+      // @include mixin.media(mobile) {
+      //   .mat-form-field {
+      //     width: 200px;
+      //   }
+      // }
+
+      .mat-button-base {
+        margin-top: 2px;
+        margin-left: 12px;
+        margin-bottom: 22px;
+        padding-left: 22px;
+        padding-right: 22px;
+      }
+    }
+  }
+}

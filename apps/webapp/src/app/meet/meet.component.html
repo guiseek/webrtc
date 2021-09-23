@@ -1,0 +1,65 @@
+<mat-card id="remote">
+  <video autoplay playsinline [srcObject]="peer.remote"></video>
+</mat-card>
+
+<mat-card id="local" [ngClass]="{ videoff: peer.uiState.video }">
+  <video autoplay playsinline [muted]="!!peer.stream" [srcObject]="peer.stream"></video>
+
+  <canvas #audioCanvas height="15px"> </canvas>
+
+  <mat-card-actions>
+    <button
+      type="button"
+      mat-icon-button
+      (click)="peer.toggleVideo(peer.stream)"
+    >
+      <mat-icon>
+        {{ peer.uiState.video ? 'videocam_off' : 'videocam' }}
+      </mat-icon>
+    </button>
+    <button
+      type="button"
+      mat-icon-button
+      (click)="peer.toggleAudio(peer.stream)"
+    >
+      <mat-icon>{{ peer.uiState.audio ? 'mic_off' : 'mic' }}</mat-icon>
+    </button>
+    <button type="button" mat-icon-button (click)="inputFile.click()">
+      <mat-icon>upload</mat-icon>
+    </button>
+    <button
+      type="button"
+      mat-icon-button
+      [color]="recorder?.state !== 'recording' ? 'default' : 'warn'"
+      (click)="record(peer.stream)"
+    >
+      <mat-icon>{{
+        recorder?.state !== 'recording'
+          ? 'radio_button_unchecked'
+          : 'radio_button_checked'
+      }}</mat-icon>
+    </button>
+  </mat-card-actions>
+</mat-card>
+
+<input
+  #inputFile
+  type="file"
+  name="files"
+  [multiple]="false"
+  (change)="peer.upload($any($event.target).files[0])"
+/>
+
+<button mat-fab color="warn" (click)="end()">
+  <mat-icon>call_end</mat-icon>
+</button>
+
+<ng-container *ngIf="(peer.progress$ | async) !== 0">
+  <div class="progress">
+    <mat-progress-spinner
+      color="primary"
+      mode="determinate"
+      [value]="peer.progress$ | async">
+    </mat-progress-spinner>
+  </div>
+</ng-container>

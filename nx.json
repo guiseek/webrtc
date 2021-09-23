@@ -35,6 +35,9 @@
     },
     "ports": {
       "tags": []
+    },
+    "webapp": {
+      "tags": []
     }
   }
 }

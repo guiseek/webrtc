@@ -299,14 +299,7 @@ nx generate @nrwl/workspace:library --name=adapters --strict
 ```sh
 touch libs/adapters/src/lib/signaling.impl.ts
 touch libs/adapters/src/lib/peer.impl.ts
-
-mkdir -p libs/adapters/src/lib/utils
-touch libs/adapters/src/lib/utils/draw-oscilloscope.ts
-
-rm libs/adapters/src/lib/adapters*
 ```
-
-##### Signaling 
 
 Em `libs/adapters/src/lib/signaling.impl.ts`
 ```ts
@@ -334,72 +327,8 @@ export class SignalingImpl implements Signaling<Socket> {
 }
 ```
 
-
-##### Oscilloscope
-
-Arquivo `libs/adapters/src/lib/utils/draw-oscilloscope.ts`
-```ts
-const defaultValue = {
-  fill: '#fff',
-  stroke: '#111',
-};
-
-export function drawOscilloscope(
-  canvas: HTMLCanvasElement,
-  analyser: AnalyserNode,
-  style: {
-    fill: string;
-    stroke: string;
-  } = defaultValue
-) {
-  if (!(canvas as any).isDestroyed) {
-    requestAnimationFrame(() => {
-      drawOscilloscope(canvas, analyser, style);
-    });
-  }
-
-  const canvasCtx = <CanvasRenderingContext2D>(
-    (<HTMLCanvasElement>canvas).getContext('2d')
-  );
-
-  const bufferLength = analyser.frequencyBinCount;
-  const dataArray = new Uint8Array(bufferLength);
-  analyser.getByteTimeDomainData(dataArray);
-
-  if (canvas.parentElement?.style.backgroundColor) {
-    canvasCtx.fillStyle = canvas.parentElement?.style.backgroundColor;
-  }
-
-  canvasCtx.fillStyle = style.fill;
-  canvasCtx.fillRect(0, 0, canvas.width, canvas.height);
-
-  canvasCtx.lineWidth = 2;
-  canvasCtx.strokeStyle = style.stroke;
-
-  canvasCtx.beginPath();
-
-  const sliceWidth = (canvas.width * 1.0) / bufferLength;
-  let x = 0;
-
-  for (let i = 0; i < bufferLength; i++) {
-    const v = dataArray[i] / 128.0;
-    const y = (v * canvas.height) / 2;
-
-    if (i === 0) {
-      canvasCtx.moveTo(x, y);
-    } else {
-      canvasCtx.lineTo(x, y);
-    }
-
-    x += sliceWidth;
-  }
-
-  canvasCtx.lineTo(canvas.width, canvas.height / 2);
-  canvasCtx.stroke();
-}
+```sh
 ```
-
-##### Peer
 
 Arquivo `libs/adapters/src/lib/peer.impl.ts`
 ```ts
@@ -713,14 +642,9 @@ export class PeerImpl implements Peer {
 }
 ```
 
-##### Export adapters
-Em `libs/adapters/src/index.ts`
-```ts
-export * from './lib/utils/draw-oscilloscope';
-export * from './lib/signaling.impl';
-export * from './lib/peer.impl';
+```sh
+rm libs/adapters/src/lib/adapters*
 ```
-
 
 
 ```sh
@@ -746,11 +670,11 @@ nx generate @nrwl/nest:application --name=gateway
 nx generate @nrwl/nest:gateway --name=signaling --project=gateway
 ```
 
-### Mova para raiz do projeto
+### Mova para raíz do projeto o `app.module.ts`
 
-Move o arquivo `apps/gateway/src/app/app.module.ts` para o diretório `src` (1 para trás), ficando junto ao `main.ts` e `signaling.gateway.ts` que acabamos de criar.
+Mais específicamente `apps/gateway/src/app/app.module.ts` para o diretório `src` (1 para trás), ficando junto ao `main.ts` e `signaling.gateway.ts` que acabamos de criar.
 
-O que restar no diretório `app` pode ser apagado.
+O que restar no diretório app pode ser apagado.
 
 ### Instale estes pacotes
 

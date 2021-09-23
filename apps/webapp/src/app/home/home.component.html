@@ -1,0 +1,18 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit(form)">
+  <mat-form-field appearance="fill" color="accent">
+    <mat-label>Sala</mat-label>
+    <input matInput formControlName="meet" placeholder="Sala" />
+    <mat-icon matSuffix>sentiment_very_satisfied</mat-icon>
+    <mat-hint>Este código foi gerado aleatoriamente, mas é possível altera-lo</mat-hint>
+  </mat-form-field>
+
+  <section>
+    <mat-form-field appearance="fill">
+      <mat-label>Nickname</mat-label>
+      <input matInput autofocus formControlName="nickname" placeholder="Qual seu apelido?" />
+      <mat-icon matSuffix>sentiment_very_satisfied</mat-icon>
+    </mat-form-field>
+
+    <button mat-stroked-button [disabled]="form.invalid">Entrar na sala</button>
+  </section>
+</form>
