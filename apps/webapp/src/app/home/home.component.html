@@ -1,1 +1,24 @@
-<p>home works!</p>
+
+
+<form [formGroup]="form" (ngSubmit)="onSubmit(form)">
+  <section>
+    <label>Sala</label>
+    <input matInput formControlName="meet" placeholder="Sala" />
+    <small>
+      Este código foi gerado aleatoriamente, mas é possível altera-lo
+    </small>
+  </section>
+
+  <section>
+    <label>Nickname</label>
+    <input
+      autofocus
+      formControlName="nickname"
+      placeholder="Qual seu apelido?"
+    />
+  </section>
+
+  <footer>
+    <button [disabled]="form.invalid">Entrar na sala</button>
+  </footer>
+</form>

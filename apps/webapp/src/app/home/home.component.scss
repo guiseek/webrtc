@@ -1,0 +1,34 @@
+:host {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  form {
+    gap: 16px;
+    padding: 16px;
+
+    input {
+      width: 100%;
+    }
+
+    section {
+      display: flex;
+      flex-direction: column;
+      margin-top: 8px;
+      width: 260px;
+
+      button {
+        margin-top: 2px;
+        margin-left: 12px;
+        margin-bottom: 22px;
+        padding-left: 22px;
+        padding-right: 22px;
+      }
+    }
+
+    footer {
+      margin-top: 24px;
+    }
+  }
+}
