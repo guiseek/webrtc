@@ -1,7 +1,8 @@
 export enum SignalingEvent {
-  Offer = 'offer',
-  Answer = 'answer',
-  Candidate = 'candidate',
+  KnockKnock = 'knock-knock',
   Connection = 'connection',
-  Knocknock = 'knocknock'
+  Available = 'available',
+  Message = 'message',
+  Answer = 'answer',
+  Offer = 'offer',
 }

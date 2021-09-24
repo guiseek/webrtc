@@ -7,6 +7,11 @@ export type PeerEventMap = {
   track: MediaStreamTrack;
 
   /**
+   * Stream local disponível
+   */
+  stream: MediaStream;
+
+  /**
    * O estado de sinalização mudou. Essa mudança
    * de estado é o resultado de um setLocalDescriptionou
    * de setRemoteDescriptionser invocado.
@@ -29,7 +34,20 @@ export type PeerEventMap = {
   iceGatheringChange: RTCIceGatheringState;
 
   /**
-   * O RTCIceConnectionState da conexão ICE mudou.
+   * O RTCPeerConnectionIceEvent da conexão ICE mudou.
    */
-  iceConnectionChange: RTCIceConnectionState;
+  iceConnectionChange: RTCPeerConnectionIceEvent;
+
+
+  /**
+   * Um novo RTCDataChannelé despachado para o script
+   * em resposta ao outro par criando um canal.
+   */
+  dataChannel: RTCDataChannel;
+
+  /**
+   * Um novo RTCDataChannelé despachado para o script
+   * em resposta ao outro par criando um canal.
+   */
+  data: ArrayBuffer | string;
 };

@@ -1,5 +1,6 @@
 export interface SignalMessage {
   sdp: RTCSessionDescription;
   ice: RTCIceCandidate;
-  uuid: string;
+  meet: string;
+  user: string;
 }
