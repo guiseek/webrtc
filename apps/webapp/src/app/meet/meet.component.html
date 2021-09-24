@@ -1,1 +1,42 @@
-<p>meet works!</p>
+<section id="remote">
+  <video autoplay playsinline [srcObject]="peer.remote"></video>
+</section>
+
+<section id="local" [ngClass]="{ videoff: peer.uiState.video }">
+  <video
+    autoplay
+    playsinline
+    [muted]="!!peer.stream"
+    [srcObject]="peer.stream"
+  ></video>
+
+  <footer>
+    <button type="button" i-button (click)="peer.toggleVideo(peer.stream)">
+      <i>
+        {{ peer.uiState.video ? 'videocam_off' : 'videocam' }}
+      </i>
+    </button>
+    <button type="button" i-button (click)="peer.toggleAudio(peer.stream)">
+      <i>{{ peer.uiState.audio ? 'mic_off' : 'mic' }}</i>
+    </button>
+    <button type="button" i-button (click)="inputFile.click()">
+      <i>upload</i>
+    </button>
+  </footer>
+</section>
+
+<input
+  #inputFile
+  type="file"
+  name="files"
+  [multiple]="false"
+  (change)="peer.upload($any($event.target).files[0])"
+/>
+
+<button (click)="end()">
+  <i>call_end</i>
+</button>
+
+<div *ngIf="(peer.progress$ | async) !== 0" class="progress">
+  <progress [value]="peer.progress$ | async"></progress>
+</div>
