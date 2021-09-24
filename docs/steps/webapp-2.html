@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>ADAPTERS.md</title>
+    <meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
+    
+    <link href="assets/style.css" rel="stylesheet">
+    <script src="assets/nav-pages.js"></script>
+
+    <script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
+  </head>
+  <body>
+    <script>
+      mermaid.initialize({
+        startOnLoad: true,
+        theme:
+          document.body.classList.contains('vscode-dark') ||
+          document.body.classList.contains('vscode-high-contrast')
+            ? 'dark'
+            : 'default',
+      });
+    </script>
+
+
+    <nav-pages></nav-pages>
+
+<hr>
+<h1 id="web-app">Web App</h1>
+<h2 id="criando-o-app-providers">Criando o app providers</h2>
+<pre class="hljs"><code><div>nx g class app-providers --project webapp --skip-tests
+</div></code></pre>
+<h3 id="relacionando-ports-e-adapters-como-providers">Relacionando ports e adapters como providers</h3>
+<pre class="hljs"><code><div><span class="hljs-keyword">import</span> { PeerImpl, SignalingImpl } <span class="hljs-keyword">from</span> <span class="hljs-string">'@webrtc/adapters'</span>;
+<span class="hljs-keyword">import</span> { Peer, Signaling, Socket } <span class="hljs-keyword">from</span> <span class="hljs-string">'@webrtc/ports'</span>;
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">class</span> AppProviders {
+  <span class="hljs-keyword">static</span> forPorts({
+    signaling,
+    iceServers,
+  }: {
+    signaling: <span class="hljs-built_in">string</span>;
+    iceServers: RTCIceServer[];
+  }) {
+    <span class="hljs-keyword">return</span> [
+      {
+        provide: Signaling,
+        useFactory: <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {
+          <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> SignalingImpl(signaling);
+        },
+      },
+      {
+        provide: Peer,
+        useFactory: <span class="hljs-function">(<span class="hljs-params">signaling: Signaling&lt;Socket&gt;</span>) =&gt;</span> {
+          <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> PeerImpl({ iceServers: iceServers }, signaling);
+        },
+        deps: [Signaling],
+      },
+    ];
+  }
+}
+</div></code></pre>
+<h3 id="adicionando-configura%C3%A7%C3%A3o-do-ambiente">Adicionando configuração do ambiente</h3>
+<pre class="hljs"><code><div><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> environment: {
+  production: <span class="hljs-built_in">boolean</span>;
+  signaling: <span class="hljs-built_in">string</span>;
+  iceServers: RTCIceServer[];
+} = {
+  production: <span class="hljs-literal">false</span>,
+  signaling: <span class="hljs-string">'http://localhost:3333'</span>,
+  iceServers: [
+    {
+      urls: [<span class="hljs-string">'stun:54.90.98.123:3478'</span>],
+      username: <span class="hljs-string">'works'</span>,
+      credential: <span class="hljs-string">'contact'</span>,
+      credentialType: <span class="hljs-string">'password'</span>,
+    },
+  ],
+};
+</div></code></pre>
+<h3 id="importando-providers">Importando providers</h3>
+<pre class="hljs"><code><div><span class="hljs-meta">@NgModule</span>({
+  declarations: [AppComponent, HomeComponent],
+  imports: [BrowserModule, AppRoutingModule],
+
+  providers: [AppProviders.forPorts(environment)],
+  
+  bootstrap: [AppComponent],
+})
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">class</span> AppModule {}
+</div></code></pre>
+<h2 id="app">App</h2>
+<h3 id="index">Index</h3>
+<p>Arquivo <code>apps/webapp/src/index.html</code></p>
+<pre class="hljs"><code><div><span class="hljs-meta">&lt;!DOCTYPE <span class="hljs-meta-keyword">html</span>&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">html</span> <span class="hljs-attr">lang</span>=<span class="hljs-string">"pt-br"</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">head</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">meta</span> <span class="hljs-attr">charset</span>=<span class="hljs-string">"utf-8"</span> /&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">title</span>&gt;</span>Webapp<span class="hljs-tag">&lt;/<span class="hljs-name">title</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">base</span> <span class="hljs-attr">href</span>=<span class="hljs-string">"/"</span> /&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">meta</span> <span class="hljs-attr">name</span>=<span class="hljs-string">"viewport"</span> <span class="hljs-attr">content</span>=<span class="hljs-string">"width=device-width, initial-scale=1"</span> /&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">link</span> <span class="hljs-attr">rel</span>=<span class="hljs-string">"icon"</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"image/x-icon"</span> <span class="hljs-attr">href</span>=<span class="hljs-string">"favicon.ico"</span> /&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">link</span> <span class="hljs-attr">href</span>=<span class="hljs-string">"https://fonts.googleapis.com/css2?family=Material+Icons"</span> <span class="hljs-attr">rel</span>=<span class="hljs-string">"stylesheet"</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">link</span> <span class="hljs-attr">rel</span>=<span class="hljs-string">"preconnect"</span> <span class="hljs-attr">href</span>=<span class="hljs-string">"https://fonts.googleapis.com"</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">link</span> <span class="hljs-attr">rel</span>=<span class="hljs-string">"preconnect"</span> <span class="hljs-attr">href</span>=<span class="hljs-string">"https://fonts.gstatic.com"</span> <span class="hljs-attr">crossorigin</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">link</span> <span class="hljs-attr">href</span>=<span class="hljs-string">"https://fonts.googleapis.com/css2?family=Source+Sans+Pro&amp;display=swap"</span> <span class="hljs-attr">rel</span>=<span class="hljs-string">"stylesheet"</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">head</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">body</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">webrtc-root</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">webrtc-root</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">body</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">html</span>&gt;</span>
+</div></code></pre>
+<h3 id="component">Component</h3>
+<p>Arquivo <code>apps/webapp/src/app/app.component.html</code></p>
+<pre class="hljs"><code><div><span class="hljs-tag">&lt;<span class="hljs-name">main</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">router-outlet</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">router-outlet</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">main</span>&gt;</span>
+</div></code></pre>
+<h3 id="estilos">Estilos</h3>
+<p>Arquivo <code>apps/webapp/src/styles.scss</code></p>
+<pre class="hljs"><code><div><span class="hljs-selector-tag">html</span>,
+<span class="hljs-selector-tag">body</span> {
+  <span class="hljs-attribute">height</span>: <span class="hljs-number">100%</span>;
+}
+
+<span class="hljs-selector-tag">body</span> {
+  <span class="hljs-attribute">margin</span>: <span class="hljs-number">0</span>;
+  <span class="hljs-attribute">font-size</span>: <span class="hljs-number">1.4rem</span>;
+  <span class="hljs-attribute">font-family</span>: <span class="hljs-string">'Source Sans Pro'</span>, sans-serif;
+}
+
+<span class="hljs-selector-tag">button</span> {
+  <span class="hljs-attribute">border</span>: <span class="hljs-number">0</span>;
+  <span class="hljs-attribute">font-size</span>: <span class="hljs-number">100%</span>;
+  <span class="hljs-attribute">cursor</span>: pointer;
+  <span class="hljs-attribute">padding</span>: <span class="hljs-number">6px</span> <span class="hljs-number">12px</span>;
+  <span class="hljs-attribute">border-radius</span>: <span class="hljs-number">8px</span>;
+}
+</div></code></pre>
+<p>Arquivo <code>apps/webapp/src/app/app.component.scss</code></p>
+<pre class="hljs"><code><div>:host {
+  width: <span class="hljs-number">100%</span>;
+  <span class="hljs-attribute">height</span>: <span class="hljs-number">100%</span>;
+  <span class="hljs-attribute">display</span>: flex;
+  <span class="hljs-attribute">flex-direction</span>: column;
+  <span class="hljs-attribute">align-items</span>: center;
+  <span class="hljs-attribute">justify-content</span>: center;
+
+  <span class="hljs-attribute">background-image</span>: url(https://codecon.dev/dark-city.png);
+  <span class="hljs-attribute">background-repeat</span>: no-repeat;
+  <span class="hljs-attribute">background-size</span>: <span class="hljs-number">100%</span>;
+  <span class="hljs-attribute">background-color</span>: <span class="hljs-number">#232933</span>;
+
+  main {
+    <span class="hljs-attribute">flex</span>: <span class="hljs-number">1</span>;
+    <span class="hljs-attribute">width</span>: <span class="hljs-number">100%</span>;
+    <span class="hljs-attribute">display</span>: flex;
+
+    <span class="hljs-attribute">margin</span>: <span class="hljs-number">0</span>;
+    <span class="hljs-attribute">font-size</span>: <span class="hljs-number">1.4rem</span>;
+    <span class="hljs-attribute">font-family</span>: <span class="hljs-string">'Source Sans Pro'</span>, sans-serif;
+
+    <span class="hljs-attribute">background-image</span>: url(https://codecon.dev/sand.png);
+    <span class="hljs-attribute">background-repeat</span>: no-repeat;
+    <span class="hljs-attribute">background-position</span>: bottom;
+    <span class="hljs-attribute">background-size</span>: <span class="hljs-number">100%</span>;
+  }
+}
+</div></code></pre>
+<h2 id="home">Home</h2>
+<h3 id="importando-reactive-forms">Importando reactive forms</h3>
+<p>Arquivo <code>apps/webapp/src/app/app.module.ts</code></p>
+<pre class="hljs"><code><div>  imports: [
+    ...
+    ReactiveFormsModule,
+    ...
+  ]
+</div></code></pre>
+<h3 id="criando-form-de-entrada">Criando form de entrada</h3>
+<p>Arquivo <code>apps/webapp/src/app/home/home.component.ts</code></p>
+<pre class="hljs"><code><div><span class="hljs-keyword">import</span> { Component, OnInit } <span class="hljs-keyword">from</span> <span class="hljs-string">'@angular/core'</span>;
+<span class="hljs-keyword">import</span> { FormBuilder, FormGroup, Validators } <span class="hljs-keyword">from</span> <span class="hljs-string">'@angular/forms'</span>;
+<span class="hljs-keyword">import</span> { Router } <span class="hljs-keyword">from</span> <span class="hljs-string">'@angular/router'</span>;
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">type</span> ObjOf&lt;T = unknown&gt; = Record&lt;<span class="hljs-built_in">string</span>, T&gt;;
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> toJson = &lt;R&gt;<span class="hljs-function">(<span class="hljs-params">data: <span class="hljs-built_in">string</span></span>) =&gt;</span> <span class="hljs-built_in">JSON</span>.parse(data) <span class="hljs-keyword">as</span> R;
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> toText = &lt;T <span class="hljs-keyword">extends</span> ObjOf&lt;T[keyof T]&gt;&gt;<span class="hljs-function">(<span class="hljs-params">data: T</span>) =&gt;</span>
+  <span class="hljs-built_in">JSON</span>.stringify(data);
+
+<span class="hljs-keyword">export</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">uuid</span>(<span class="hljs-params"></span>) </span>{
+  <span class="hljs-keyword">return</span> <span class="hljs-string">'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'</span>.replace(<span class="hljs-regexp">/[xy]/g</span>, <span class="hljs-function">(<span class="hljs-params">c</span>) =&gt;</span> {
+    <span class="hljs-keyword">const</span> r = (<span class="hljs-built_in">Math</span>.random() * <span class="hljs-number">16</span>) | <span class="hljs-number">0</span>;
+    <span class="hljs-keyword">const</span> v = c == <span class="hljs-string">'x'</span> ? r : (r &amp; <span class="hljs-number">0x3</span>) | <span class="hljs-number">0x8</span>;
+    <span class="hljs-keyword">return</span> v.toString(<span class="hljs-number">16</span>);
+  });
+}
+
+<span class="hljs-meta">@Component</span>({
+  selector: <span class="hljs-string">'webrtc-home'</span>,
+  templateUrl: <span class="hljs-string">'./home.component.html'</span>,
+  styleUrls: [<span class="hljs-string">'./home.component.scss'</span>],
+})
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">class</span> HomeComponent <span class="hljs-keyword">implements</span> OnInit {
+  form = <span class="hljs-keyword">this</span>._fb.group({
+    nickname: [<span class="hljs-string">''</span>, Validators.required],
+    meet: [<span class="hljs-string">''</span>, Validators.required],
+  });
+
+  <span class="hljs-keyword">constructor</span>(<span class="hljs-params"><span class="hljs-keyword">private</span> _fb: FormBuilder, <span class="hljs-keyword">private</span> _router: Router</span>) {}
+
+  <span class="hljs-keyword">async</span> ngOnInit() {
+    <span class="hljs-keyword">this</span>.form.patchValue({ meet: uuid() });
+  }
+
+  onSubmit(form: FormGroup) {
+    <span class="hljs-keyword">if</span> (form.valid) {
+      <span class="hljs-keyword">const</span> { meet } = <span class="hljs-keyword">this</span>.form.value;
+      <span class="hljs-keyword">this</span>._router.navigate([<span class="hljs-string">'/'</span>, <span class="hljs-string">'meet'</span>, meet], <span class="hljs-keyword">this</span>.form.value);
+    }
+  }
+}
+</div></code></pre>
+<p>Arquivo <code>apps/webapp/src/app/home/home.component.html</code></p>
+<pre class="hljs"><code><div><span class="hljs-tag">&lt;<span class="hljs-name">form</span> [<span class="hljs-attr">formGroup</span>]=<span class="hljs-string">"form"</span> (<span class="hljs-attr">ngSubmit</span>)=<span class="hljs-string">"onSubmit(form)"</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">section</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">label</span>&gt;</span>Sala<span class="hljs-tag">&lt;/<span class="hljs-name">label</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">matInput</span> <span class="hljs-attr">formControlName</span>=<span class="hljs-string">"meet"</span> <span class="hljs-attr">placeholder</span>=<span class="hljs-string">"Sala"</span> /&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">small</span>&gt;</span>
+      Este código foi gerado aleatoriamente, mas é possível altera-lo
+    <span class="hljs-tag">&lt;/<span class="hljs-name">small</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">section</span>&gt;</span>
+
+  <span class="hljs-tag">&lt;<span class="hljs-name">section</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">label</span>&gt;</span>Nickname<span class="hljs-tag">&lt;/<span class="hljs-name">label</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">input</span>
+      <span class="hljs-attr">autofocus</span>
+      <span class="hljs-attr">formControlName</span>=<span class="hljs-string">"nickname"</span>
+      <span class="hljs-attr">placeholder</span>=<span class="hljs-string">"Qual seu apelido?"</span>
+    /&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">section</span>&gt;</span>
+
+  <span class="hljs-tag">&lt;<span class="hljs-name">footer</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">button</span> [<span class="hljs-attr">disabled</span>]=<span class="hljs-string">"form.invalid"</span>&gt;</span>Entrar na sala<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">footer</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">form</span>&gt;</span>
+</div></code></pre>
+<p>Arquivo <code>apps/webapp/src/app/home/home.component.scss</code></p>
+<pre class="hljs"><code><div>:host {
+  flex: <span class="hljs-number">1</span>;
+  <span class="hljs-attribute">display</span>: flex;
+  <span class="hljs-attribute">justify-content</span>: center;
+  <span class="hljs-attribute">align-items</span>: center;
+
+  <span class="hljs-selector-tag">form</span> {
+    gap: <span class="hljs-number">24px</span>;
+    <span class="hljs-attribute">display</span>: flex;
+    <span class="hljs-attribute">flex-direction</span>: column;
+    <span class="hljs-attribute">padding</span>: <span class="hljs-number">16px</span>;
+    <span class="hljs-attribute">color</span>: white;
+    <span class="hljs-attribute">background-color</span>: rgba(<span class="hljs-number">255</span>, <span class="hljs-number">255</span>, <span class="hljs-number">255</span>, <span class="hljs-number">0.2</span>);
+    <span class="hljs-attribute">border-radius</span>: <span class="hljs-number">16px</span>;
+
+    <span class="hljs-selector-tag">input</span> {
+      <span class="hljs-attribute">margin</span>: <span class="hljs-number">4px</span> <span class="hljs-number">0</span>;
+      <span class="hljs-attribute">padding</span>: <span class="hljs-number">16px</span>;
+      <span class="hljs-attribute">border-radius</span>: <span class="hljs-number">8px</span>;
+      <span class="hljs-attribute">font-size</span>: <span class="hljs-number">1.4rem</span>;
+      <span class="hljs-attribute">color</span>: <span class="hljs-number">#724bfe</span>;
+      <span class="hljs-attribute">border</span>: <span class="hljs-number">0</span>;
+    }
+
+    <span class="hljs-selector-tag">section</span> {
+      <span class="hljs-attribute">display</span>: flex;
+      <span class="hljs-attribute">flex-direction</span>: column;
+      <span class="hljs-attribute">margin-top</span>: <span class="hljs-number">8px</span>;
+      <span class="hljs-selector-tag">button</span> {
+        <span class="hljs-attribute">margin-top</span>: <span class="hljs-number">2px</span>;
+        <span class="hljs-attribute">margin-left</span>: <span class="hljs-number">12px</span>;
+        <span class="hljs-attribute">margin-bottom</span>: <span class="hljs-number">22px</span>;
+        <span class="hljs-attribute">padding-left</span>: <span class="hljs-number">22px</span>;
+        <span class="hljs-attribute">padding-right</span>: <span class="hljs-number">22px</span>;
+      }
+    }
+
+    <span class="hljs-selector-tag">footer</span> {
+      <span class="hljs-attribute">margin-top</span>: <span class="hljs-number">24px</span>;
+    }
+  }
+}
+</div></code></pre>
+
+
+
+<nav style="display: flex; justify-content: space-between;">
+  <h1><a href="./webapp.html">< Web App</a></h1>
+  <h1><a href="./webapp-3.html">Web App - Meet ></a></h1>
+</nav>
+
+
+
+</body>
+</html>

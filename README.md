@@ -1,51 +1,14 @@
-# Webrtc
+# Workshop WebRTC
 
-```sh
-nvm use 16
-```
+Guilherme Visi Siquinelli
 
-```sh
-npx create-nx-workspace@latest  webrtc --preset=empty --no-nx-cloud
-```
+1. [Ports](docs/PORTS.md)
 
-```sh
-npx nx generate @nrwl/workspace:library --name=ports --strict
-```
+1. [Adapters](docs/ADAPTERS.md)
 
-```sh
-npm i -g nx
-```
+1. [Gateway](docs/GATEWAY.md)
 
-```sh
-nx list @nrwl/angular
-```
-
-```sh
-npm i -D @nrwl/angular
-```
-
-```sh
-npx nx g @nrwl/angular:init
-```
-
-```sh
-nx list @nrwl/nest
-```
-
-```sh
-npm i -D @nrwl/nest
-```
-
-```sh
-npx nx g @nrwl/nest:init
-```
-
-```sh
-nx g enum enums/signaling-event --project=ports
-```
-
-```sh
-nx g i interfaces/signal-message --project=ports
-```
-
-Visit [Nx Cloud](https://nx.app/) to learn more.
+1. [Web App](docs/WEBAPP.md)
+    1. [Web App](docs/WEBAPP.md)
+    1. [Web App 2](docs/WEBAPP-2.md)
+    1. [Web App 3](docs/WEBAPP-3.md)

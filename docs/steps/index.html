@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>ADAPTERS.md</title>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+
+<link href="assets/style.css" rel="stylesheet">
+<script src="assets/nav-pages.js"></script>
+
+<script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: document.body.classList.contains('vscode-dark') || document.body.classList.contains('vscode-high-contrast')
+          ? 'dark'
+          : 'default'
+    });
+</script>
+
+<nav-pages></nav-pages>
+
+<hr>
+<h1 id="adapters">Adapters</h1>
+<h2 id="criando-a-biblioteca">Criando a biblioteca</h2>
+<pre class="hljs"><code><div>nx generate @nrwl/workspace:library --name=adapters --strict
+</div></code></pre>
+<h3 id="removendo-o-desnecess%C3%A1rio">Removendo o desnecessário</h3>
+<pre class="hljs"><code><div>rm libs/adapters/src/lib/adapters*.ts
+</div></code></pre>
+<h2 id="sinaliza%C3%A7%C3%A3o">Sinalização</h2>
+<h3 id="criando-arquivo">Criando arquivo</h3>
+<pre class="hljs"><code><div>touch libs/adapters/src/lib/signaling.impl.ts
+</div></code></pre>
+<h3 id="implementando">Implementando</h3>
+<pre class="hljs"><code><div><span class="hljs-keyword">import</span> { Signaling, SignalMessage } <span class="hljs-keyword">from</span> <span class="hljs-string">'@webrtc/ports'</span>;
+<span class="hljs-keyword">import</span> { io, Socket } <span class="hljs-keyword">from</span> <span class="hljs-string">'socket.io-client'</span>;
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">class</span> SignalingImpl <span class="hljs-keyword">implements</span> Signaling&lt;Socket&gt; {
+  conn: Socket;
+
+  <span class="hljs-keyword">constructor</span>(<span class="hljs-params">readonly signalingServer: <span class="hljs-built_in">string</span></span>) {
+    <span class="hljs-keyword">this</span>.conn = io(signalingServer);
+  }
+
+  on(event: <span class="hljs-built_in">string</span>, fn: <span class="hljs-function">(<span class="hljs-params">message: SignalMessage</span>) =&gt;</span> <span class="hljs-built_in">void</span>) {
+    <span class="hljs-keyword">this</span>.conn.on(event, fn);
+  }
+
+  emit&lt;T&gt;(event: <span class="hljs-built_in">string</span>, message: T) {
+    <span class="hljs-keyword">this</span>.conn.emit(event, message);
+  }
+}
+</div></code></pre>
+<h2 id="ponto-de-conex%C3%A3o">Ponto de conexão</h2>
+<h3 id="criando-arquivo">Criando arquivo</h3>
+<pre class="hljs"><code><div>touch libs/adapters/src/lib/peer.impl.ts
+</div></code></pre>
+<h3 id="implementando">Implementando</h3>
+<pre class="hljs"><code><div><span class="hljs-keyword">import</span> {
+  Peer,
+  Socket,
+  Callback,
+  Signaling,
+  PeerUiState,
+  PeerEventMap,
+  SignalMessage,
+  PeerEventCallback,
+} <span class="hljs-keyword">from</span> <span class="hljs-string">'@webrtc/ports'</span>;
+<span class="hljs-keyword">import</span> { BehaviorSubject } <span class="hljs-keyword">from</span> <span class="hljs-string">'rxjs'</span>;
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">class</span> PeerImpl <span class="hljs-keyword">implements</span> Peer {
+  user?: <span class="hljs-built_in">string</span> | <span class="hljs-literal">undefined</span>;
+  meet?: <span class="hljs-built_in">string</span> | <span class="hljs-literal">undefined</span>;
+
+  conn: RTCPeerConnection;
+
+  stream: MediaStream;
+  remote?: MediaStream | <span class="hljs-literal">undefined</span>;
+
+  uiState: PeerUiState;
+
+  receiveMeta?: <span class="hljs-built_in">string</span>;
+  receiveBuffer: <span class="hljs-built_in">ArrayBuffer</span>[] = [];
+  <span class="hljs-keyword">public</span> receivedSize = <span class="hljs-number">0</span>;
+  
+  <span class="hljs-keyword">private</span> _progress = <span class="hljs-keyword">new</span> BehaviorSubject&lt;<span class="hljs-built_in">number</span>&gt;(<span class="hljs-number">0</span>);
+  <span class="hljs-keyword">public</span> progress$ = <span class="hljs-keyword">this</span>._progress.asObservable();
+
+  <span class="hljs-keyword">private</span> receiveChannel!: RTCDataChannel;
+  <span class="hljs-keyword">private</span> sendChannel!: RTCDataChannel;
+
+  events: PeerEventCallback&lt;keyof PeerEventMap&gt;;
+
+  <span class="hljs-keyword">constructor</span>(<span class="hljs-params">
+    configuration: RTCConfiguration,
+    <span class="hljs-keyword">private</span> signaling: Signaling&lt;Socket&gt;
+  </span>) {
+    <span class="hljs-keyword">this</span>.conn = <span class="hljs-keyword">new</span> RTCPeerConnection(configuration);
+
+    <span class="hljs-keyword">this</span>.stream = <span class="hljs-keyword">new</span> MediaStream();
+    <span class="hljs-keyword">this</span>.user = <span class="hljs-keyword">this</span>.stream.id;
+
+    <span class="hljs-keyword">this</span>.events = <span class="hljs-keyword">new</span> Map();
+
+    <span class="hljs-keyword">this</span>.uiState = {
+      audio: <span class="hljs-literal">false</span>,
+      video: <span class="hljs-literal">false</span>,
+    };
+  }
+
+  <span class="hljs-keyword">public</span> on&lt;K <span class="hljs-keyword">extends</span> keyof PeerEventMap&gt;(
+    key: K,
+    fn: Callback&lt;PeerEventMap[K]&gt;
+  ): <span class="hljs-built_in">void</span> {
+    <span class="hljs-keyword">this</span>.events.set(key, fn <span class="hljs-keyword">as</span> () =&gt; <span class="hljs-built_in">void</span>);
+  }
+
+  <span class="hljs-keyword">public</span> connect(meet?: <span class="hljs-built_in">string</span>): <span class="hljs-built_in">void</span> {
+    <span class="hljs-keyword">if</span> (meet) {
+      <span class="hljs-keyword">this</span>.meet = meet;
+    }
+
+    <span class="hljs-keyword">this</span>.signalUp();
+    <span class="hljs-keyword">this</span>.listen();
+  }
+
+  <span class="hljs-keyword">public</span> send(message: <span class="hljs-built_in">string</span>): <span class="hljs-built_in">void</span> {
+    <span class="hljs-keyword">this</span>.sendChannel.send(message);
+  }
+
+  <span class="hljs-keyword">public</span> upload(file: File): <span class="hljs-built_in">void</span> {
+    <span class="hljs-keyword">this</span>.sendChannel.binaryType = <span class="hljs-string">'arraybuffer'</span>;
+
+    <span class="hljs-keyword">const</span> chunkSize = <span class="hljs-number">16384</span>;
+    <span class="hljs-keyword">const</span> fileReader = <span class="hljs-keyword">new</span> FileReader();
+    <span class="hljs-keyword">let</span> offset = <span class="hljs-number">0</span>;
+
+    fileReader.onload = <span class="hljs-function">(<span class="hljs-params">{ target }: ProgressEvent&lt;FileReader&gt;</span>) =&gt;</span> {
+      <span class="hljs-keyword">const</span> result = target?.result <span class="hljs-keyword">as</span> <span class="hljs-built_in">ArrayBuffer</span>;
+
+      <span class="hljs-keyword">if</span> (offset === <span class="hljs-number">0</span>) {
+        <span class="hljs-keyword">this</span>.send(<span class="hljs-string">`<span class="hljs-subst">${file.name}</span>;<span class="hljs-subst">${file.size}</span>`</span>);
+      }
+
+      <span class="hljs-keyword">this</span>.sendChannel.send(result);
+
+      offset += result.byteLength;
+
+      <span class="hljs-keyword">const</span> percentage = (offset / file.size) * <span class="hljs-number">100</span>;
+      <span class="hljs-keyword">this</span>._progress.next(percentage);
+      
+      <span class="hljs-keyword">if</span> (offset &lt; file.size) {
+        readSlice(offset);
+      } <span class="hljs-keyword">else</span> {
+        <span class="hljs-keyword">this</span>._progress.next(<span class="hljs-number">0</span>);
+      }
+    };
+
+    <span class="hljs-keyword">const</span> readSlice = <span class="hljs-function">(<span class="hljs-params">o: <span class="hljs-built_in">number</span></span>) =&gt;</span> {
+      <span class="hljs-keyword">const</span> slice = file.slice(offset, o + chunkSize);
+      fileReader.readAsArrayBuffer(slice);
+    };
+
+    readSlice(<span class="hljs-number">0</span>);
+  }
+
+  <span class="hljs-keyword">async</span> signalUp(): <span class="hljs-built_in">Promise</span>&lt;<span class="hljs-built_in">void</span>&gt; {
+    <span class="hljs-keyword">await</span> navigator.mediaDevices
+      .getUserMedia(<span class="hljs-keyword">this</span>.getConfig())
+      .then(<span class="hljs-keyword">this</span>.gotStream());
+
+    <span class="hljs-keyword">this</span>.signaling.on(<span class="hljs-string">'message'</span>, <span class="hljs-function">(<span class="hljs-params">message</span>) =&gt;</span> {
+      <span class="hljs-keyword">this</span>.getSignalMessage()(message);
+    });
+  }
+
+  getConfig() {
+    <span class="hljs-keyword">let</span> audio: <span class="hljs-built_in">string</span> | Partial&lt;MediaDeviceInfo&gt; =
+      localStorage.getItem(<span class="hljs-string">'audio'</span>) ?? <span class="hljs-string">'true'</span>;
+    <span class="hljs-keyword">let</span> video: <span class="hljs-built_in">string</span> | Partial&lt;MediaDeviceInfo&gt; =
+      localStorage.getItem(<span class="hljs-string">'video'</span>) ?? <span class="hljs-string">'true'</span>;
+
+    <span class="hljs-keyword">if</span> (audio) {
+      <span class="hljs-keyword">const</span> { deviceId } = <span class="hljs-built_in">JSON</span>.parse(audio <span class="hljs-keyword">as</span> <span class="hljs-built_in">string</span>);
+      audio = { deviceId };
+    }
+    <span class="hljs-keyword">if</span> (video) {
+      <span class="hljs-keyword">const</span> { deviceId } = <span class="hljs-built_in">JSON</span>.parse(video <span class="hljs-keyword">as</span> <span class="hljs-built_in">string</span>);
+      video = { deviceId };
+    }
+
+    <span class="hljs-keyword">return</span> { audio, video } <span class="hljs-keyword">as</span> MediaStreamConstraints;
+  }
+
+  listen(): <span class="hljs-built_in">void</span> {
+    <span class="hljs-keyword">this</span>.conn.onicecandidate = <span class="hljs-keyword">this</span>.getIceCandidate();
+
+    <span class="hljs-keyword">this</span>.conn.ondatachannel = <span class="hljs-function">(<span class="hljs-params">evt</span>) =&gt;</span> {
+      <span class="hljs-keyword">this</span>.receiveChannel = evt.channel;
+      <span class="hljs-keyword">this</span>.receiveChannel.onmessage = <span class="hljs-function">(<span class="hljs-params">message</span>) =&gt;</span> {
+        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> message.data === <span class="hljs-string">'string'</span>) {
+          <span class="hljs-keyword">this</span>.receiveMeta = message.data;
+          <span class="hljs-keyword">const</span> event = <span class="hljs-keyword">this</span>.events.get(<span class="hljs-string">'data'</span>);
+          <span class="hljs-keyword">if</span> (event) event(message.data);
+        }
+
+        <span class="hljs-keyword">if</span> (message.data <span class="hljs-keyword">instanceof</span> <span class="hljs-built_in">ArrayBuffer</span>) {
+          <span class="hljs-keyword">this</span>.onReceiveMessageCallback(message);
+          <span class="hljs-keyword">const</span> event = <span class="hljs-keyword">this</span>.events.get(<span class="hljs-string">'data'</span>);
+          <span class="hljs-keyword">if</span> (event) event(message.data);
+        }
+      };
+    };
+
+    <span class="hljs-keyword">this</span>.sendChannel = <span class="hljs-keyword">this</span>.conn.createDataChannel(<span class="hljs-string">'sendDataChannel'</span>);
+    <span class="hljs-keyword">this</span>.sendChannel.onopen = <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {
+      <span class="hljs-keyword">const</span> event = <span class="hljs-keyword">this</span>.events.get(<span class="hljs-string">'dataChannel'</span>);
+      <span class="hljs-keyword">if</span> (event) event(<span class="hljs-keyword">this</span>.sendChannel);
+    };
+  }
+
+  gotStream(): <span class="hljs-function">(<span class="hljs-params">stream: MediaStream</span>) =&gt;</span> <span class="hljs-built_in">void</span> {
+    <span class="hljs-keyword">return</span> <span class="hljs-function">(<span class="hljs-params">stream</span>) =&gt;</span> {
+      <span class="hljs-keyword">this</span>.stream = stream;
+
+      <span class="hljs-keyword">const</span> onStreamEvent = <span class="hljs-keyword">this</span>.events.get(<span class="hljs-string">'stream'</span>);
+      <span class="hljs-keyword">if</span> (onStreamEvent) onStreamEvent(stream);
+
+      <span class="hljs-keyword">const</span> [videoTrack] = <span class="hljs-keyword">this</span>.stream.getVideoTracks();
+      <span class="hljs-keyword">const</span> [audioTrack] = <span class="hljs-keyword">this</span>.stream.getAudioTracks();
+
+      <span class="hljs-keyword">this</span>.conn.addTrack(videoTrack);
+      <span class="hljs-keyword">this</span>.conn.addTrack(audioTrack);
+
+      <span class="hljs-keyword">this</span>.remote = <span class="hljs-keyword">new</span> MediaStream();
+
+      <span class="hljs-keyword">this</span>.conn.ontrack = <span class="hljs-function">(<span class="hljs-params">{ isTrusted, track }</span>) =&gt;</span> {
+        <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.remote &amp;&amp; isTrusted &amp;&amp; track) {
+          <span class="hljs-keyword">this</span>.remote.addTrack(track);
+        }
+
+        <span class="hljs-keyword">const</span> onTrackEvent = <span class="hljs-keyword">this</span>.events.get(<span class="hljs-string">'track'</span>);
+        <span class="hljs-keyword">if</span> (onTrackEvent) onTrackEvent(track);
+      };
+
+      <span class="hljs-keyword">this</span>.conn
+        .createOffer()
+        .then(<span class="hljs-keyword">this</span>.setDescription())
+        .catch(<span class="hljs-keyword">this</span>.errorHandler);
+    };
+  }
+
+  setDescription(): <span class="hljs-function">(<span class="hljs-params">description: RTCSessionDescriptionInit</span>) =&gt;</span> <span class="hljs-built_in">void</span> {
+    <span class="hljs-keyword">return</span> <span class="hljs-function">(<span class="hljs-params">description</span>) =&gt;</span> {
+      <span class="hljs-keyword">this</span>.conn.setLocalDescription(description).then(<span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {
+        <span class="hljs-keyword">const</span> message = {
+          sdp: <span class="hljs-keyword">this</span>.conn.localDescription,
+          meet: <span class="hljs-keyword">this</span>.meet,
+          user: <span class="hljs-keyword">this</span>.user,
+        };
+        <span class="hljs-keyword">this</span>.signaling.emit(<span class="hljs-string">'message'</span>, message);
+      });
+    };
+  }
+
+  getSignalMessage(): <span class="hljs-function">(<span class="hljs-params">message: SignalMessage</span>) =&gt;</span> <span class="hljs-built_in">void</span> {
+    <span class="hljs-keyword">return</span> <span class="hljs-function">(<span class="hljs-params">{ user, sdp, ice }</span>) =&gt;</span> {
+      <span class="hljs-keyword">if</span> (user === <span class="hljs-keyword">this</span>.user) {
+        <span class="hljs-keyword">return</span>;
+      }
+
+      <span class="hljs-keyword">if</span> (sdp) {
+        <span class="hljs-keyword">this</span>.conn
+          .setRemoteDescription(<span class="hljs-keyword">new</span> RTCSessionDescription(sdp))
+          .then(<span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {
+            <span class="hljs-keyword">if</span> (sdp.type === <span class="hljs-string">'offer'</span>) {
+              <span class="hljs-keyword">this</span>.conn
+                .createAnswer()
+                .then(<span class="hljs-keyword">this</span>.setDescription())
+                .catch(<span class="hljs-keyword">this</span>.errorHandler);
+            }
+          })
+          .catch(<span class="hljs-keyword">this</span>.errorHandler);
+      } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (ice) {
+        <span class="hljs-keyword">this</span>.conn
+          .addIceCandidate(<span class="hljs-keyword">new</span> RTCIceCandidate(ice))
+          .catch(<span class="hljs-keyword">this</span>.errorHandler);
+
+        <span class="hljs-keyword">const</span> onCandidateEvent = <span class="hljs-keyword">this</span>.events.get(<span class="hljs-string">'iceCandidateChange'</span>);
+        <span class="hljs-keyword">if</span> (onCandidateEvent) onCandidateEvent(ice);
+      }
+    };
+  }
+
+  getIceCandidate(): <span class="hljs-function">(<span class="hljs-params">event: RTCPeerConnectionIceEvent</span>) =&gt;</span> <span class="hljs-built_in">void</span> {
+    <span class="hljs-keyword">return</span> <span class="hljs-function">(<span class="hljs-params">event</span>) =&gt;</span> {
+      <span class="hljs-keyword">const</span> onIceConnectionEvent = <span class="hljs-keyword">this</span>.events.get(<span class="hljs-string">'iceConnectionChange'</span>);
+      <span class="hljs-keyword">if</span> (onIceConnectionEvent) onIceConnectionEvent(event);
+
+      <span class="hljs-keyword">if</span> (event.candidate != <span class="hljs-literal">null</span>) {
+        <span class="hljs-keyword">const</span> message = {
+          ice: event.candidate,
+          meet: <span class="hljs-keyword">this</span>.meet,
+          user: <span class="hljs-keyword">this</span>.user,
+        };
+        <span class="hljs-keyword">this</span>.signaling.emit(<span class="hljs-string">'message'</span>, message);
+      }
+    };
+  }
+
+  onReceiveMessageCallback({ data }: MessageEvent&lt;<span class="hljs-built_in">ArrayBuffer</span>&gt;): <span class="hljs-built_in">void</span> {
+    <span class="hljs-keyword">this</span>.receiveBuffer.push(data);
+    <span class="hljs-keyword">this</span>.receivedSize += data.byteLength;
+
+    <span class="hljs-keyword">let</span> name = <span class="hljs-string">''</span>;
+
+    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.receiveMeta) {
+      <span class="hljs-keyword">const</span> meta = <span class="hljs-keyword">this</span>.receiveMeta?.split(<span class="hljs-string">';'</span>);
+      <span class="hljs-keyword">const</span> [filename, size] = meta ? meta : [];
+      <span class="hljs-keyword">const</span> percentage = (<span class="hljs-keyword">this</span>.receivedSize / +size) * <span class="hljs-number">100</span>;
+      <span class="hljs-keyword">this</span>._progress.next(percentage);
+
+      name = filename;
+
+      
+    }
+    <span class="hljs-keyword">if</span> (data.byteLength &lt; <span class="hljs-number">16384</span>) {
+      <span class="hljs-keyword">const</span> received = <span class="hljs-keyword">new</span> Blob(<span class="hljs-keyword">this</span>.receiveBuffer);
+
+      <span class="hljs-keyword">this</span>.receiveBuffer = [];
+      <span class="hljs-keyword">this</span>.receivedSize = <span class="hljs-number">0</span>;
+
+      <span class="hljs-keyword">const</span> link = <span class="hljs-built_in">document</span>.createElement(<span class="hljs-string">'a'</span>);
+      link.href = URL.createObjectURL(received);
+      link.download = name;
+      link.click();
+
+      <span class="hljs-keyword">delete</span> <span class="hljs-keyword">this</span>.receiveMeta;
+      <span class="hljs-keyword">this</span>._progress.next(<span class="hljs-number">0</span>);
+    }
+  }
+
+  toggleAudio(stream: MediaStream) {
+    <span class="hljs-keyword">const</span> tracks = stream.getAudioTracks();
+    tracks.forEach(<span class="hljs-function">(<span class="hljs-params">t</span>) =&gt;</span> (t.enabled = !t.enabled));
+
+    <span class="hljs-keyword">this</span>.uiState.audio = !<span class="hljs-keyword">this</span>.uiState.audio;
+  }
+
+  toggleVideo(stream: MediaStream) {
+    <span class="hljs-keyword">const</span> tracks = stream.getVideoTracks();
+    tracks.forEach(<span class="hljs-function">(<span class="hljs-params">t</span>) =&gt;</span> (t.enabled = !t.enabled));
+
+    <span class="hljs-keyword">this</span>.uiState.video = !<span class="hljs-keyword">this</span>.uiState.video;
+  }
+
+  errorHandler(error: RTCPeerConnectionIceErrorEvent): <span class="hljs-built_in">void</span> {
+    <span class="hljs-built_in">console</span>.error(error);
+  }
+
+  close() {
+    <span class="hljs-keyword">const</span> tracks = <span class="hljs-keyword">this</span>.stream.getTracks();
+    tracks.forEach(<span class="hljs-function">(<span class="hljs-params">t</span>) =&gt;</span> t.stop());
+    <span class="hljs-keyword">this</span>.conn.close();
+  }
+}
+</div></code></pre>
+<h3 id="api-p%C3%BAblica">API Pública</h3>
+<pre class="hljs"><code><div><span class="hljs-keyword">export</span> * <span class="hljs-keyword">from</span> <span class="hljs-string">'./lib/signaling.impl'</span>;
+<span class="hljs-keyword">export</span> * <span class="hljs-keyword">from</span> <span class="hljs-string">'./lib/peer.impl'</span>;
+</div></code></pre>
+
+<nav style="display: flex; justify-content: flex-end;">
+  <h1><a href="./gateway.html">Gateway ></a></h1>
+</nav>
+</body>
+</html>

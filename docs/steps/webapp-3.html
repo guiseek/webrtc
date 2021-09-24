@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>ADAPTERS.md</title>
+    <meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
+    
+    <link href="assets/style.css" rel="stylesheet">
+    <script src="assets/nav-pages.js"></script>
+
+
+    <script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
+  </head>
+  <body>
+    <script>
+      mermaid.initialize({
+        startOnLoad: true,
+        theme:
+          document.body.classList.contains('vscode-dark') ||
+          document.body.classList.contains('vscode-high-contrast')
+            ? 'dark'
+            : 'default',
+      });
+    </script>
+
+    <nav-pages></nav-pages>
+    
+<hr>
+<h1 id="web-app">Web App</h1>
+<h2 id="meet">Meet</h2>
+<h3 id="implementando-confer%C3%AAncia">Implementando conferência</h3>
+<p>Perceba quem nós estamos injetando no construtor, não é a implementação, mas a abstração.</p>
+<p>Isso permite a mudança de implementação sem afetar a aplicação.</p>
+<p>Arquivo <code>apps/webapp/src/app/meet/meet.component.ts</code></p>
+<pre class="hljs"><code><div><span class="hljs-keyword">import</span> { ActivatedRoute, Router } <span class="hljs-keyword">from</span> <span class="hljs-string">'@angular/router'</span>;
+<span class="hljs-keyword">import</span> { Component, OnInit } <span class="hljs-keyword">from</span> <span class="hljs-string">'@angular/core'</span>;
+<span class="hljs-keyword">import</span> { Peer } <span class="hljs-keyword">from</span> <span class="hljs-string">'@webrtc/ports'</span>;
+
+
+<span class="hljs-meta">@Component</span>({
+  selector: <span class="hljs-string">'webrtc-meet'</span>,
+  templateUrl: <span class="hljs-string">'./meet.component.html'</span>,
+  <span class="hljs-comment">// styleUrls: ['./meet.component.scss']</span>
+})
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">class</span> MeetComponent <span class="hljs-keyword">implements</span> OnInit {
+  meet: <span class="hljs-built_in">string</span>;
+  
+  <span class="hljs-keyword">constructor</span>(<span class="hljs-params">
+    readonly route: ActivatedRoute,
+    <span class="hljs-keyword">private</span> _router: Router,
+    readonly peer: Peer
+  </span>) {
+    <span class="hljs-keyword">const</span> { meet } = <span class="hljs-keyword">this</span>.route.snapshot.params;
+    <span class="hljs-keyword">if</span> (meet) <span class="hljs-keyword">this</span>.meet = meet;
+    <span class="hljs-keyword">else</span> <span class="hljs-keyword">this</span>.meet = <span class="hljs-string">''</span>;
+  }
+
+  ngOnInit(): <span class="hljs-built_in">void</span> {
+    <span class="hljs-keyword">this</span>.peer.connect(<span class="hljs-keyword">this</span>.meet);
+  }
+
+  end() {
+    <span class="hljs-keyword">this</span>.peer.close();
+    <span class="hljs-keyword">this</span>._router.navigate([<span class="hljs-string">'/'</span>]);
+  }
+}
+</div></code></pre>
+<h3 id="estilos">Estilos</h3>
+<h4 id="altera-tipo-do-arquivo-de-css-para-scss">Altera tipo do arquivo de CSS para SCSS</h4>
+<p>No diretório <code>apps/webapp/src/app/meet/</code>, alterar de <code>meet.component.css</code> para <code>meet.component.scss</code> e então descomentar linha <code>9</code> no arquivo <code>meet.component.ts</code></p>
+<h4 id="adicionando-estilos">Adicionando estilos</h4>
+<p>Arquivo <code>apps/webapp/src/app/meet/meet.component.scss</code></p>
+<pre class="hljs"><code><div>:host {
+  flex: <span class="hljs-number">1</span>;
+  <span class="hljs-attribute">margin</span>: <span class="hljs-number">20px</span>;
+  <span class="hljs-attribute">display</span>: flex;
+  <span class="hljs-attribute">align-items</span>: center;
+  <span class="hljs-attribute">flex-direction</span>: column;
+  <span class="hljs-attribute">justify-content</span>: center;
+}
+
+<span class="hljs-selector-class">.container</span> {
+  <span class="hljs-attribute">padding</span>: <span class="hljs-number">8px</span>;
+  <span class="hljs-attribute">width</span>: <span class="hljs-number">100%</span>;
+  <span class="hljs-attribute">max-width</span>: <span class="hljs-number">1920px</span>;
+  <span class="hljs-attribute">max-height</span>: <span class="hljs-number">1080px</span>;
+  <span class="hljs-attribute">display</span>: flex;
+  <span class="hljs-selector-tag">object</span>-fit: contain;
+  <span class="hljs-attribute">flex-direction</span>: column;
+  <span class="hljs-attribute">border-radius</span>: <span class="hljs-number">12px</span>;
+  <span class="hljs-attribute">background-color</span>: rgba(<span class="hljs-number">255</span>, <span class="hljs-number">255</span>, <span class="hljs-number">255</span>, <span class="hljs-number">0.8</span>);
+}
+
+<span class="hljs-selector-tag">section</span> {
+  <span class="hljs-attribute">padding</span>: <span class="hljs-number">0</span>;
+  <span class="hljs-attribute">overflow</span>: hidden;
+  <span class="hljs-attribute">border-radius</span>: <span class="hljs-number">8px</span>;
+
+  <span class="hljs-attribute">background-color</span>: white;
+
+  &amp;<span class="hljs-selector-class">.videoff</span> {
+    <span class="hljs-attribute">transition</span>: background-color <span class="hljs-number">250ms</span> ease-in-out;
+
+    <span class="hljs-attribute">background-color</span>: rgba(<span class="hljs-number">255</span>, <span class="hljs-number">255</span>, <span class="hljs-number">255</span>, <span class="hljs-number">0.2</span>);
+
+    <span class="hljs-selector-tag">video</span> {
+      <span class="hljs-attribute">opacity</span>: <span class="hljs-number">0</span>;
+      <span class="hljs-attribute">transition</span>: opacity <span class="hljs-number">250ms</span> ease-in-out;
+    }
+
+    <span class="hljs-selector-tag">footer</span> {
+      <span class="hljs-attribute">opacity</span>: <span class="hljs-number">0.6</span>;
+      <span class="hljs-attribute">transition</span>: opacity <span class="hljs-number">250ms</span> ease-in-out;
+    }
+  }
+}
+
+<span class="hljs-selector-class">.progress</span> {
+  <span class="hljs-attribute">top</span>: <span class="hljs-number">0</span>;
+  <span class="hljs-attribute">position</span>: fixed;
+  <span class="hljs-attribute">width</span>: <span class="hljs-number">100vw</span>;
+  <span class="hljs-attribute">height</span>: <span class="hljs-number">100vh</span>;
+  <span class="hljs-attribute">display</span>: flex;
+  <span class="hljs-attribute">justify-content</span>: center;
+  <span class="hljs-attribute">align-items</span>: center;
+
+  <span class="hljs-selector-tag">progress</span> {
+    <span class="hljs-attribute">width</span>: <span class="hljs-number">50%</span>;
+    <span class="hljs-attribute">height</span>: <span class="hljs-number">64px</span>;
+  }
+}
+
+<span class="hljs-selector-tag">video</span> {
+  <span class="hljs-attribute">width</span>: <span class="hljs-number">100%</span>;
+  <span class="hljs-attribute">max-width</span>: <span class="hljs-number">100%</span>;
+}
+
+<span class="hljs-selector-tag">input</span><span class="hljs-selector-attr">[type='file']</span> {
+  <span class="hljs-attribute">display</span>: none;
+}
+
+<span class="hljs-selector-tag">section</span><span class="hljs-selector-id">#remote</span> {
+  <span class="hljs-selector-tag">video</span> {
+    <span class="hljs-attribute">width</span>: <span class="hljs-number">100%</span>;
+    <span class="hljs-attribute">max-width</span>: <span class="hljs-number">100%</span>;
+    <span class="hljs-attribute">border-radius</span>: <span class="hljs-number">12px</span>;
+    <span class="hljs-attribute">margin-bottom</span>: -<span class="hljs-number">6px</span>;
+  }
+}
+
+<span class="hljs-selector-tag">section</span><span class="hljs-selector-id">#local</span> {
+  <span class="hljs-attribute">max-width</span>: <span class="hljs-number">200px</span>;
+  <span class="hljs-attribute">position</span>: fixed;
+  <span class="hljs-attribute">bottom</span>: <span class="hljs-number">20px</span>;
+  <span class="hljs-attribute">left</span>: <span class="hljs-number">20px</span>;
+  <span class="hljs-attribute">z-index</span>: <span class="hljs-number">10</span>;
+
+  &amp; &gt; <span class="hljs-selector-tag">footer</span> {
+    <span class="hljs-attribute">margin</span>: <span class="hljs-number">0</span>;
+    <span class="hljs-attribute">padding</span>: <span class="hljs-number">0</span>;
+    <span class="hljs-attribute">display</span>: flex;
+    <span class="hljs-attribute">margin-bottom</span>: <span class="hljs-number">0</span>;
+    <span class="hljs-attribute">justify-content</span>: space-between;
+
+    <span class="hljs-attribute">background-color</span>: white;
+
+    <span class="hljs-attribute">opacity</span>: <span class="hljs-number">0.6</span>;
+    <span class="hljs-attribute">transition</span>: opacity <span class="hljs-number">250ms</span> ease-in-out;
+
+    &amp;<span class="hljs-selector-pseudo">:hover</span> {
+      <span class="hljs-attribute">opacity</span>: <span class="hljs-number">1</span>;
+    }
+
+    <span class="hljs-selector-tag">button</span> {
+      <span class="hljs-attribute">width</span>: <span class="hljs-number">33%</span>;
+      <span class="hljs-attribute">background-color</span>: transparent;
+    }
+  }
+}
+
+<span class="hljs-selector-class">.call-end</span> {
+  <span class="hljs-attribute">width</span>: <span class="hljs-number">64px</span>;
+  <span class="hljs-attribute">height</span>: <span class="hljs-number">64px</span>;
+
+  <span class="hljs-selector-tag">i</span> {
+    <span class="hljs-attribute">font-size</span>: <span class="hljs-number">32px</span>;
+    <span class="hljs-attribute">line-height</span>: <span class="hljs-number">32px</span>;
+  }
+
+  <span class="hljs-attribute">border-radius</span>: <span class="hljs-number">50%</span>;
+  <span class="hljs-attribute">display</span>: flex;
+  <span class="hljs-attribute">color</span>: white;
+  <span class="hljs-attribute">cursor</span>: pointer;
+  <span class="hljs-attribute">align-items</span>: center;
+  <span class="hljs-attribute">justify-content</span>: center;
+  <span class="hljs-attribute">background-color</span>: red;
+  <span class="hljs-attribute">position</span>: fixed;
+  <span class="hljs-attribute">right</span>: <span class="hljs-number">20px</span>;
+  <span class="hljs-attribute">bottom</span>: <span class="hljs-number">20px</span>;
+}
+</div></code></pre>
+<h4 id="template">Template</h4>
+<p>Arquivo <code>apps/webapp/src/app/meet/meet.component.html</code></p>
+<pre class="hljs"><code><div><span class="hljs-tag">&lt;<span class="hljs-name">section</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"container"</span> <span class="hljs-attr">id</span>=<span class="hljs-string">"remote"</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">video</span> <span class="hljs-attr">autoplay</span> <span class="hljs-attr">playsinline</span> [<span class="hljs-attr">srcObject</span>]=<span class="hljs-string">"peer.remote"</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">video</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">section</span>&gt;</span>
+
+<span class="hljs-tag">&lt;<span class="hljs-name">section</span> <span class="hljs-attr">id</span>=<span class="hljs-string">"local"</span> [<span class="hljs-attr">ngClass</span>]=<span class="hljs-string">"{ videoff: peer.uiState.video }"</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">video</span>
+    <span class="hljs-attr">autoplay</span>
+    <span class="hljs-attr">playsinline</span>
+    [<span class="hljs-attr">muted</span>]=<span class="hljs-string">"!!peer.stream"</span>
+    [<span class="hljs-attr">srcObject</span>]=<span class="hljs-string">"peer.stream"</span>
+  &gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">video</span>&gt;</span>
+
+  <span class="hljs-tag">&lt;<span class="hljs-name">footer</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"button"</span> (<span class="hljs-attr">click</span>)=<span class="hljs-string">"peer.toggleVideo(peer.stream)"</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">i</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"material-icons"</span>&gt;</span>
+        {{ peer.uiState.video ? 'videocam_off' : 'videocam' }}
+      <span class="hljs-tag">&lt;/<span class="hljs-name">i</span>&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"button"</span> (<span class="hljs-attr">click</span>)=<span class="hljs-string">"peer.toggleAudio(peer.stream)"</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">i</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"material-icons"</span>&gt;</span>
+        {{ peer.uiState.audio ? 'mic_off' : 'mic' }}
+      <span class="hljs-tag">&lt;/<span class="hljs-name">i</span>&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"button"</span> (<span class="hljs-attr">click</span>)=<span class="hljs-string">"inputFile.click()"</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">i</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"material-icons"</span>&gt;</span>upload<span class="hljs-tag">&lt;/<span class="hljs-name">i</span>&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">footer</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">section</span>&gt;</span>
+
+<span class="hljs-tag">&lt;<span class="hljs-name">input</span>
+  #<span class="hljs-attr">inputFile</span>
+  <span class="hljs-attr">type</span>=<span class="hljs-string">"file"</span>
+  <span class="hljs-attr">name</span>=<span class="hljs-string">"files"</span>
+  [<span class="hljs-attr">multiple</span>]=<span class="hljs-string">"false"</span>
+  (<span class="hljs-attr">change</span>)=<span class="hljs-string">"peer.upload($any($event.target).files[0])"</span>
+/&gt;</span>
+
+<span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"call-end"</span> (<span class="hljs-attr">click</span>)=<span class="hljs-string">"end()"</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">i</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"material-icons"</span>&gt;</span>call_end<span class="hljs-tag">&lt;/<span class="hljs-name">i</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+
+<span class="hljs-tag">&lt;<span class="hljs-name">div</span> *<span class="hljs-attr">ngIf</span>=<span class="hljs-string">"(peer.progress$ | async) !== 0"</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"progress"</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">progress</span> [<span class="hljs-attr">value</span>]=<span class="hljs-string">"peer.progress$ | async"</span> <span class="hljs-attr">max</span>=<span class="hljs-string">"100"</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">progress</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+</div></code></pre>
+
+
+<nav style="display: flex; justify-content: space-between;">
+  <h1><a href="./webapp-2.html">< Web App - Home</a></h1>
+</nav>
+
+
+
+</body>
+</html>

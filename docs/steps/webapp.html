@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>ADAPTERS.md</title>
+    <meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
+    
+    <link href="assets/style.css" rel="stylesheet">
+    <script src="assets/nav-pages.js"></script>
+
+    <script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
+  </head>
+  <body>
+    <script>
+      mermaid.initialize({
+        startOnLoad: true,
+        theme:
+          document.body.classList.contains('vscode-dark') ||
+          document.body.classList.contains('vscode-high-contrast')
+            ? 'dark'
+            : 'default',
+      });
+    </script>
+    
+    <nav-pages></nav-pages>
+
+    <hr />
+    <h1 id="web-app">Web App</h1>
+    <h2 id="criando-a-aplica%C3%A7%C3%A3o">Criando a aplicação</h2>
+    <pre class="hljs"><code><div>nx generate @nrwl/angular:application --name=webapp --backendProject=gateway --e2eTestRunner=none --routing
+    </div></code></pre>
+    <h2 id="rotas">Rotas</h2>
+    <h3 id="criando-o-app-routing">Criando o app routing</h3>
+    <pre class="hljs"><code><div>nx g m app-routing --flat --project webapp
+    </div></code></pre>
+    <h3 id="criando-a-p%C3%A1gina-inicial">Criando a página inicial</h3>
+    <pre class="hljs"><code><div>nx g c home --project webapp --skip-tests
+    </div></code></pre>
+    <h3 id="configurando-rotas">Configurando rotas</h3>
+    <p>Arquivo <code>apps/webapp/src/app/app-routing.module.ts</code></p>
+    <pre class="hljs"><code><div><span class="hljs-keyword">import</span> { HomeComponent } <span class="hljs-keyword">from</span> <span class="hljs-string">'./home/home.component'</span>;
+    <span class="hljs-keyword">import</span> { RouterModule } <span class="hljs-keyword">from</span> <span class="hljs-string">'@angular/router'</span>;
+    <span class="hljs-keyword">import</span> { NgModule } <span class="hljs-keyword">from</span> <span class="hljs-string">'@angular/core'</span>;
+    
+    <span class="hljs-meta">@NgModule</span>({
+      imports: [
+        RouterModule.forRoot(
+          [
+            {
+              path: <span class="hljs-string">''</span>,
+              component: HomeComponent,
+            },
+          ],
+          { initialNavigation: <span class="hljs-string">'enabledBlocking'</span> }
+        ),
+      ],
+      exports: [RouterModule],
+    })
+    <span class="hljs-keyword">export</span> <span class="hljs-keyword">class</span> AppRoutingModule {}
+    </div></code></pre>
+    <h2 id="criando-m%C3%B3dulo-da-confer%C3%AAncia">Criando módulo da conferência</h2>
+    <pre class="hljs"><code><div>nx g m meet --route meet --module app --project webapp
+    </div></code></pre>
+    <h4 id="configurando-rota-da-reuni%C3%A3o">Configurando rota da reunião</h4>
+    <p>Adicionar parâmetro <code>:meet</code> como código da reunião</p>
+    <p>Arquivo <code>apps/webapp/src/app/meet/meet-routing.module.ts</code></p>
+    <pre class="hljs"><code><div><span class="hljs-keyword">import</span> { NgModule } <span class="hljs-keyword">from</span> <span class="hljs-string">'@angular/core'</span>;
+    <span class="hljs-keyword">import</span> { RouterModule, Routes } <span class="hljs-keyword">from</span> <span class="hljs-string">'@angular/router'</span>;
+    <span class="hljs-keyword">import</span> { MeetComponent } <span class="hljs-keyword">from</span> <span class="hljs-string">'./meet.component'</span>;
+    
+    <span class="hljs-keyword">const</span> routes: Routes = [{ path: <span class="hljs-string">':meet'</span>, component: MeetComponent }];
+    
+    <span class="hljs-meta">@NgModule</span>({
+      imports: [RouterModule.forChild(routes)],
+      exports: [RouterModule]
+    })
+    <span class="hljs-keyword">export</span> <span class="hljs-keyword">class</span> MeetRoutingModule { }
+    </div></code></pre>
+    <h3 id="importando-app-routing">Importando app routing</h3>
+    <pre class="hljs"><code><div><span class="hljs-keyword">import</span> { NgModule } <span class="hljs-keyword">from</span> <span class="hljs-string">'@angular/core'</span>;
+    <span class="hljs-keyword">import</span> { BrowserModule } <span class="hljs-keyword">from</span> <span class="hljs-string">'@angular/platform-browser'</span>;
+    
+    <span class="hljs-keyword">import</span> { AppComponent } <span class="hljs-keyword">from</span> <span class="hljs-string">'./app.component'</span>;
+    <span class="hljs-keyword">import</span> { HomeComponent } <span class="hljs-keyword">from</span> <span class="hljs-string">'./home/home.component'</span>;
+    <span class="hljs-keyword">import</span> { AppRoutingModule } <span class="hljs-keyword">from</span> <span class="hljs-string">'./app-routing.module'</span>;
+    
+    <span class="hljs-meta">@NgModule</span>({
+      declarations: [AppComponent, HomeComponent],
+      imports: [
+        BrowserModule,
+        AppRoutingModule
+      ],
+      providers: [],
+      bootstrap: [AppComponent],
+    })
+    <span class="hljs-keyword">export</span> <span class="hljs-keyword">class</span> AppModule {}
+    </div></code></pre>
+    <h3 id="servindo-a-aplica%C3%A7%C3%A3o">Servindo a aplicação</h3>
+    <pre class="hljs"><code><div>nx run-many --target=serve --all --parallel --max-parallel=2
+    </div></code></pre>
+    
+
+<nav style="display: flex; justify-content: space-between;">
+  <h1><a href="./gateway.html">< Gateway</a></h1>
+  <h1><a href="./webapp-2.html">Web App - Home ></a></h1>
+</nav>
+
+
+</body>
+</html>

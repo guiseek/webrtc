@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>ADAPTERS.md</title>
+    <meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
+    
+    <link href="assets/style.css" rel="stylesheet">
+    <script src="assets/nav-pages.js"></script>
+
+    <script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
+  </head>
+  <body>
+    <script>
+      mermaid.initialize({
+        startOnLoad: true,
+        theme:
+          document.body.classList.contains('vscode-dark') ||
+          document.body.classList.contains('vscode-high-contrast')
+            ? 'dark'
+            : 'default',
+      });
+    </script>
+
+    <nav-pages></nav-pages>
+
+    <hr />
+    <h1 id="gateway">Gateway</h1>
+    <h2 id="criando-a-aplica%C3%A7%C3%A3o">Criando a aplicação</h2>
+    <pre class="hljs"><code><div>nx generate @nrwl/nest:application --name=gateway
+    </div></code></pre>
+    <h3 id="movendo-pra-raiz">Movendo pra raiz</h3>
+    <pre class="hljs"><code><div>mv apps/gateway/src/app/app.module.ts apps/gateway/src/
+    mv apps/gateway/src/app/app.controller.ts apps/gateway/src/
+    </div></code></pre>
+    <h3 id="removendo-o-desnecess%C3%A1rio">Removendo o desnecessário</h3>
+    <pre class="hljs"><code><div>rm -rf apps/gateway/src/app
+    </div></code></pre>
+    <h3 id="criando-o-gateway-de-sinaliza%C3%A7%C3%A3o">Criando o gateway de sinalização</h3>
+    <pre class="hljs"><code><div>nx generate @nrwl/nest:gateway --name=signaling --project=gateway
+    </div></code></pre>
+    <h2 id="implementando">Implementando</h2>
+    <h3 id="module">Module</h3>
+    <p>Arquivo <code>apps/gateway/src/app.module.ts</code></p>
+    <pre class="hljs"><code><div><span class="hljs-keyword">import</span> { Module } <span class="hljs-keyword">from</span> <span class="hljs-string">'@nestjs/common'</span>;
+    
+    <span class="hljs-keyword">import</span> { AppController } <span class="hljs-keyword">from</span> <span class="hljs-string">'./app.controller'</span>;
+    <span class="hljs-keyword">import</span> { SignalingGateway } <span class="hljs-keyword">from</span> <span class="hljs-string">'./signaling.gateway'</span>;
+    
+    <span class="hljs-meta">@Module</span>({
+      providers: [SignalingGateway],
+      controllers: [AppController],
+    })
+    <span class="hljs-keyword">export</span> <span class="hljs-keyword">class</span> AppModule {}
+    </div></code></pre>
+    <h3 id="controller">Controller</h3>
+    <p>Arquivo <code>apps/gateway/src/app.controller.ts</code></p>
+    <pre class="hljs"><code><div><span class="hljs-keyword">import</span> { Controller, Get } <span class="hljs-keyword">from</span> <span class="hljs-string">'@nestjs/common'</span>;
+    
+    <span class="hljs-meta">@Controller</span>()
+    <span class="hljs-keyword">export</span> <span class="hljs-keyword">class</span> AppController {
+      <span class="hljs-meta">@Get</span>()
+      getData() {
+        <span class="hljs-keyword">return</span>  { message: <span class="hljs-string">'Gateway'</span> };
+      }
+    }
+    </div></code></pre>
+    <h3 id="gateway">Gateway</h3>
+    <p>Arquivo <code>apps/gateway/src/signaling.gateway.ts</code></p>
+    <pre class="hljs"><code><div><span class="hljs-keyword">import</span> {
+      MessageBody,
+      ConnectedSocket,
+      WebSocketServer,
+      SubscribeMessage,
+      WebSocketGateway,
+      OnGatewayConnection,
+    } <span class="hljs-keyword">from</span> <span class="hljs-string">'@nestjs/websockets'</span>;
+    <span class="hljs-keyword">import</span> { SignalingEvent, SignalMessage } <span class="hljs-keyword">from</span> <span class="hljs-string">'@webrtc/ports'</span>;
+    <span class="hljs-keyword">import</span> { Server, Socket } <span class="hljs-keyword">from</span> <span class="hljs-string">'socket.io'</span>;
+    
+    
+    <span class="hljs-meta">@WebSocketGateway</span>({ cors: <span class="hljs-literal">true</span> })
+    <span class="hljs-keyword">export</span> <span class="hljs-keyword">class</span> SignalingGateway <span class="hljs-keyword">implements</span> OnGatewayConnection {
+      <span class="hljs-meta">@WebSocketServer</span>()
+      <span class="hljs-keyword">private</span> server: Server;
+    
+      handleConnection(<span class="hljs-meta">@ConnectedSocket</span>() client: Socket) {
+        client.emit(SignalingEvent.Connection, { id: client.id });
+      }
+    
+      <span class="hljs-meta">@SubscribeMessage</span>(SignalingEvent.KnockKnock)
+      knockKnock(
+        <span class="hljs-meta">@ConnectedSocket</span>() contact: Socket,
+        <span class="hljs-meta">@MessageBody</span>() payload: SignalMessage
+      ) {
+        <span class="hljs-keyword">const</span> room = <span class="hljs-keyword">this</span>.takeOrStartRoom(payload);
+        <span class="hljs-keyword">if</span> (room.length &gt;= <span class="hljs-number">0</span> &amp;&amp; room.length &lt; <span class="hljs-number">2</span>) {
+          contact.emit(SignalingEvent.Available, <span class="hljs-literal">true</span>);
+        } <span class="hljs-keyword">else</span> {
+          contact.emit(SignalingEvent.Available, <span class="hljs-literal">false</span>);
+        }
+      }
+    
+      <span class="hljs-meta">@SubscribeMessage</span>(SignalingEvent.Message)
+      onMessage(
+        <span class="hljs-meta">@ConnectedSocket</span>() socket: Socket,
+        <span class="hljs-meta">@MessageBody</span>() payload: SignalMessage
+      ) {
+        <span class="hljs-keyword">if</span> (socket.rooms.has(payload.meet)) {
+          socket.to(payload.meet).emit(<span class="hljs-string">'message'</span>, payload);
+        } <span class="hljs-keyword">else</span> {
+          socket.join(payload.meet);
+          socket.broadcast.emit(<span class="hljs-string">'message'</span>, payload);
+        }
+      }
+    
+      <span class="hljs-keyword">private</span> takeOrStartRoom({ meet }: SignalMessage) {
+        <span class="hljs-keyword">const</span> adapter = <span class="hljs-keyword">this</span>.server.sockets.adapter;
+        <span class="hljs-keyword">return</span> adapter.rooms[meet] ?? { length: <span class="hljs-number">0</span> };
+      }
+    }
+    </div></code></pre>
+    <h3 id="main">Main</h3>
+    <p>Arquivo <code>apps/gateway/src/main.ts</code></p>
+    <pre class="hljs"><code><div><span class="hljs-keyword">import</span> { Logger } <span class="hljs-keyword">from</span> <span class="hljs-string">'@nestjs/common'</span>;
+    <span class="hljs-keyword">import</span> { NestFactory } <span class="hljs-keyword">from</span> <span class="hljs-string">'@nestjs/core'</span>;
+    
+    <span class="hljs-keyword">import</span> { AppModule } <span class="hljs-keyword">from</span> <span class="hljs-string">'./app.module'</span>;
+    
+    <span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">bootstrap</span>(<span class="hljs-params"></span>) </span>{
+      <span class="hljs-keyword">const</span> app = <span class="hljs-keyword">await</span> NestFactory.create(AppModule);
+      <span class="hljs-keyword">const</span> globalPrefix = <span class="hljs-string">'api'</span>;
+      app.setGlobalPrefix(globalPrefix);
+      <span class="hljs-keyword">const</span> port = process.env.PORT || <span class="hljs-number">3333</span>;
+      <span class="hljs-keyword">await</span> app.listen(port, <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {
+        Logger.log(<span class="hljs-string">'Listening at http://localhost:'</span> + port + <span class="hljs-string">'/'</span> + globalPrefix);
+      });
+    }
+    
+    bootstrap();
+    </div></code></pre>
+    
+
+<nav style="display: flex; justify-content: space-between;">
+  <h1><a href="./index.html">< Adapters</a></h1>
+  <h1><a href="./webapp.html">Web App ></a></h1>
+</nav>
+
+
+</body>
+</html>
