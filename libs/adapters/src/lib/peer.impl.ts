@@ -140,7 +140,10 @@ export class PeerImpl implements Peer {
     this.conn.ondatachannel = (evt) => {
       this.receiveChannel = evt.channel;
       this.receiveChannel.onmessage = (message) => {
+
         if (typeof message.data === 'string') {
+          console.log(message);
+          
           this.receiveMeta = message.data;
           const event = this.events.get('data');
           if (event) event(message.data);
@@ -198,6 +201,7 @@ export class PeerImpl implements Peer {
         const message = {
           sdp: this.conn.localDescription,
           meet: this.meet,
+          code: this.meet,
           user: this.user,
         };
         this.signaling.emit('message', message);
@@ -243,6 +247,7 @@ export class PeerImpl implements Peer {
         const message = {
           ice: event.candidate,
           meet: this.meet,
+          code: this.meet,
           user: this.user,
         };
         this.signaling.emit('message', message);
@@ -253,6 +258,9 @@ export class PeerImpl implements Peer {
   onReceiveMessageCallback({ data }: MessageEvent<ArrayBuffer>): void {
     this.receiveBuffer.push(data);
     this.receivedSize += data.byteLength;
+
+    // console.log(data);
+    
 
     let name = '';
 

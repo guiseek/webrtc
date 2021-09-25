@@ -1,0 +1,42 @@
+:host {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  form {
+    gap: 24px;
+    display: flex;
+    flex-direction: column;
+    padding: 16px;
+    color: white;
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 16px;
+
+    input {
+      margin: 4px 0;
+      padding: 16px;
+      border-radius: 8px;
+      font-size: 1.4rem;
+      color: #724bfe;
+      border: 0;
+    }
+
+    section {
+      display: flex;
+      flex-direction: column;
+      margin-top: 8px;
+      button {
+        margin-top: 2px;
+        margin-left: 12px;
+        margin-bottom: 22px;
+        padding-left: 22px;
+        padding-right: 22px;
+      }
+    }
+
+    footer {
+      margin-top: 24px;
+    }
+  }
+}
