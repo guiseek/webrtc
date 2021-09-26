@@ -5,20 +5,22 @@
 1. [Gateway](./GATEWAY.md)
 
 1. [Web App](./WEBAPP.md)
-    1. [Web App](./WEBAPP.md)
-    1. [Web App 2](./WEBAPP-2.md)
-    1. [Web App 3](./WEBAPP-3.md)
+   1. [Web App](./WEBAPP.md)
+   1. [Web App 2](./WEBAPP-2.md)
+   1. [Web App 3](./WEBAPP-3.md)
 
 ---
 
 # Adapters
 
 ## Criando a biblioteca
+
 ```sh
 nx generate @nrwl/workspace:library --name=adapters --strict
 ```
 
 ### Removendo o desnecessário
+
 ```sh
 rm libs/adapters/src/lib/adapters*.ts
 ```
@@ -91,7 +93,7 @@ export class PeerImpl implements Peer {
   receiveMeta?: string;
   receiveBuffer: ArrayBuffer[] = [];
   public receivedSize = 0;
-  
+
   private _progress = new BehaviorSubject<number>(0);
   public progress$ = this._progress.asObservable();
 
@@ -157,7 +159,7 @@ export class PeerImpl implements Peer {
 
       const percentage = (offset / file.size) * 100;
       this._progress.next(percentage);
-      
+
       if (offset < file.size) {
         readSlice(offset);
       } else {
@@ -330,8 +332,6 @@ export class PeerImpl implements Peer {
       this._progress.next(percentage);
 
       name = filename;
-
-      
     }
     if (data.byteLength < 16384) {
       const received = new Blob(this.receiveBuffer);

@@ -5,13 +5,14 @@
 1. [Gateway](./GATEWAY.md)
 
 1. [Web App](./WEBAPP.md)
-    1. [Web App](./WEBAPP.md)
-    1. [Web App 2](./WEBAPP-2.md)
-    1. [Web App 3](./WEBAPP-3.md)
+   1. [Web App](./WEBAPP.md)
+   1. [Web App 2](./WEBAPP-2.md)
+   1. [Web App 3](./WEBAPP-3.md)
 
 ---
 
 Arquivo `libs/ports/src/lib/types/peer-event-map.ts`
+
 ```ts
 export type PeerEventMap = {
   /**
@@ -53,7 +54,6 @@ export type PeerEventMap = {
    */
   iceConnectionChange: RTCPeerConnectionIceEvent;
 
-
   /**
    * Um novo RTCDataChannelé despachado para o script
    * em resposta ao outro par criando um canal.
@@ -67,7 +67,9 @@ export type PeerEventMap = {
   data: ArrayBuffer | string;
 };
 ```
+
 Arquivo `libs/ports/src/lib/types/peer-event-callback.ts`
+
 ```ts
 import { PeerEventMap } from './peer-event-map';
 import { PeerEvent } from './peer-event';
@@ -78,24 +80,32 @@ export type PeerEventCallback<K extends PeerEvent> = Map<
   Callback<PeerEventMap[K]>
 >;
 ```
+
 Arquivo `libs/ports/src/lib/types/index.ts`
+
 ```ts
 export * from './callback';
 export * from './peer-event-callback';
 export * from './peer-event-map';
 export * from './peer-event';
 ```
+
 Arquivo `libs/ports/src/lib/types/peer-event.ts`
+
 ```ts
-import { PeerEventMap } from './peer-event-map'
+import { PeerEventMap } from './peer-event-map';
 
 export type PeerEvent = keyof PeerEventMap;
 ```
+
 Arquivo `libs/ports/src/lib/types/callback.ts`
+
 ```ts
 export type Callback<T> = (value: T) => void;
 ```
+
 Arquivo `libs/ports/src/lib/enums/signaling-event.ts`
+
 ```ts
 export enum SignalingEvent {
   KnockKnock = 'knock-knock',
@@ -106,11 +116,15 @@ export enum SignalingEvent {
   Offer = 'offer',
 }
 ```
+
 Arquivo `libs/ports/src/lib/enums/index.ts`
+
 ```ts
 export * from './signaling-event';
 ```
+
 Arquivo `libs/ports/src/lib/peer.ts`
+
 ```ts
 import { Observable } from 'rxjs';
 
@@ -145,7 +159,7 @@ export abstract class Peer {
 
   public abstract upload(message: File): void;
 
-  abstract signalUp(): Promise<void>
+  abstract signalUp(): Promise<void>;
 
   abstract listen(): void;
 
@@ -159,16 +173,18 @@ export abstract class Peer {
 
   abstract onReceiveMessageCallback(event: MessageEvent<ArrayBuffer>): void;
 
-  abstract toggleAudio(stream: MediaStream): void
+  abstract toggleAudio(stream: MediaStream): void;
 
-  abstract toggleVideo(stream: MediaStream): void
+  abstract toggleVideo(stream: MediaStream): void;
 
   abstract errorHandler(error: Event): void;
 
   abstract close(): void;
 }
 ```
+
 Arquivo `libs/ports/src/lib/signaling.ts`
+
 ```ts
 import { Socket, SignalMessage } from './interfaces';
 
@@ -180,7 +196,9 @@ export abstract class Signaling<T extends Socket> {
   abstract emit<T>(event: string, message: T): void;
 }
 ```
+
 Arquivo `libs/ports/src/lib/interfaces/socket.ts`
+
 ```ts
 import { Callback } from '../types';
 
@@ -189,7 +207,9 @@ export interface Socket {
   emit<T>(evt: string, message: T): void;
 }
 ```
+
 Arquivo `libs/ports/src/lib/interfaces/signal-message.ts`
+
 ```ts
 export interface SignalMessage {
   sdp: RTCSessionDescription;
@@ -198,23 +218,30 @@ export interface SignalMessage {
   user: string;
 }
 ```
+
 Arquivo `libs/ports/src/lib/interfaces/peer-ui-state.ts`
+
 ```ts
 export interface PeerUiState {
-  audio: boolean
-  video: boolean
+  audio: boolean;
+  video: boolean;
 }
 ```
+
 Arquivo `libs/ports/src/lib/interfaces/index.ts`
+
 ```ts
 export * from './peer-ui-state';
 export * from './signal-message';
 export * from './socket';
 ```
+
 Arquivo `libs/ports/src/index.ts`
+
 ```ts
 export * from './lib/interfaces';
 export * from './lib/signaling';
 export * from './lib/enums';
 export * from './lib/types';
 export * from './lib/peer';
+```

@@ -3,9 +3,16 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
+    "nx": "nx",
     "start": "nx serve",
     "build": "nx build",
     "test": "nx test",
+    "format:check": "nx format:check",
+    "ports:build": "nx run ports:build",
+    "ports:release": "nx run ports:release",
+    "affected:lint": "nx affected:lint",
+    "affected:build": "nx affected:build",
+    "affected:release": "nx affected --target release --base origin/main",
     "postinstall": "ngcc --properties es2015 browser module main"
   },
   "private": true,
@@ -38,6 +45,7 @@
     "@angular-eslint/template-parser": "~12.3.0",
     "@angular/compiler-cli": "^12.2.0",
     "@angular/language-service": "^12.2.0",
+    "@guiseek/tool-release": "^0.0.1",
     "@nestjs/schematics": "8.0.3",
     "@nestjs/testing": "8.0.6",
     "@nrwl/angular": "^12.9.0",
@@ -58,6 +66,7 @@
     "jest": "27.0.3",
     "jest-preset-angular": "9.0.7",
     "prettier": "^2.3.1",
+    "semantic-release": "~17.4.2",
     "ts-jest": "27.0.3",
     "typescript": "~4.3.5"
   }

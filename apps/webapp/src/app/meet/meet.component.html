@@ -39,6 +39,6 @@
   <i class="material-icons">call_end</i>
 </button>
 
-<div *ngIf="(peer.progress$ | async) !== 0" class="progress">
-  <progress [value]="peer.progress$ | async" max="100"></progress>
+<div *ngIf="(progress$ | async) !== 0" class="progress">
+  <progress [value]="progress$ | async" max="100"></progress>
 </div>

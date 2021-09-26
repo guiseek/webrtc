@@ -5,9 +5,9 @@
 1. [Gateway](./GATEWAY.md)
 
 1. [Web App](./WEBAPP.md)
-    1. [Web App](./WEBAPP.md)
-    1. [Web App 2](./WEBAPP-2.md)
-    1. [Web App 3](./WEBAPP-3.md)
+   1. [Web App](./WEBAPP.md)
+   1. [Web App 2](./WEBAPP-2.md)
+   1. [Web App 3](./WEBAPP-3.md)
 
 ---
 
@@ -27,6 +27,7 @@ mv apps/gateway/src/app/app.controller.ts apps/gateway/src/
 ```
 
 ### Removendo o desnecessário
+
 ```sh
 rm -rf apps/gateway/src/app
 ```
@@ -67,7 +68,7 @@ import { Controller, Get } from '@nestjs/common';
 export class AppController {
   @Get()
   getData() {
-    return  { message: 'Gateway' };
+    return { message: 'Gateway' };
   }
 }
 ```
@@ -87,7 +88,6 @@ import {
 } from '@nestjs/websockets';
 import { SignalingEvent, SignalMessage } from '@webrtc/ports';
 import { Server, Socket } from 'socket.io';
-
 
 @WebSocketGateway({ cors: true })
 export class SignalingGateway implements OnGatewayConnection {

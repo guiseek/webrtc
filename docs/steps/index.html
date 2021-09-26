@@ -1,40 +1,46 @@
 <!DOCTYPE html>
 <html>
-<head>
-<title>ADAPTERS.md</title>
-<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+  <head>
+    <title>ADAPTERS.md</title>
+    <meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
 
-<link href="assets/style.css" rel="stylesheet">
-<script src="assets/nav-pages.js"></script>
+    <link href="assets/style.css" rel="stylesheet" />
+    <script src="assets/nav-pages.js"></script>
 
-<script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
-</head>
-<body>
-  <script>
-    mermaid.initialize({
-      startOnLoad: true,
-      theme: document.body.classList.contains('vscode-dark') || document.body.classList.contains('vscode-high-contrast')
-          ? 'dark'
-          : 'default'
-    });
-</script>
+    <script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
+  </head>
+  <body>
+    <script>
+      mermaid.initialize({
+        startOnLoad: true,
+        theme:
+          document.body.classList.contains('vscode-dark') ||
+          document.body.classList.contains('vscode-high-contrast')
+            ? 'dark'
+            : 'default',
+      });
+    </script>
 
-<nav-pages></nav-pages>
+    <nav-pages></nav-pages>
 
-<hr>
-<h1 id="adapters">Adapters</h1>
-<h2 id="criando-a-biblioteca">Criando a biblioteca</h2>
-<pre class="hljs"><code><div>nx generate @nrwl/workspace:library --name=adapters --strict
+    <hr />
+    <h1 id="adapters">Adapters</h1>
+    <h2 id="criando-a-biblioteca">Criando a biblioteca</h2>
+    <pre
+      class="hljs"
+    ><code><div>nx generate @nrwl/workspace:library --name=adapters --strict
 </div></code></pre>
-<h3 id="removendo-o-desnecess%C3%A1rio">Removendo o desnecessário</h3>
-<pre class="hljs"><code><div>rm libs/adapters/src/lib/adapters*.ts
+    <h3 id="removendo-o-desnecess%C3%A1rio">Removendo o desnecessário</h3>
+    <pre class="hljs"><code><div>rm libs/adapters/src/lib/adapters*.ts
 </div></code></pre>
-<h2 id="sinaliza%C3%A7%C3%A3o">Sinalização</h2>
-<h3 id="criando-arquivo">Criando arquivo</h3>
-<pre class="hljs"><code><div>touch libs/adapters/src/lib/signaling.impl.ts
+    <h2 id="sinaliza%C3%A7%C3%A3o">Sinalização</h2>
+    <h3 id="criando-arquivo">Criando arquivo</h3>
+    <pre class="hljs"><code><div>touch libs/adapters/src/lib/signaling.impl.ts
 </div></code></pre>
-<h3 id="implementando">Implementando</h3>
-<pre class="hljs"><code><div><span class="hljs-keyword">import</span> { Signaling, SignalMessage } <span class="hljs-keyword">from</span> <span class="hljs-string">'@webrtc/ports'</span>;
+    <h3 id="implementando">Implementando</h3>
+    <pre
+      class="hljs"
+    ><code><div><span class="hljs-keyword">import</span> { Signaling, SignalMessage } <span class="hljs-keyword">from</span> <span class="hljs-string">'@webrtc/ports'</span>;
 <span class="hljs-keyword">import</span> { io, Socket } <span class="hljs-keyword">from</span> <span class="hljs-string">'socket.io-client'</span>;
 
 <span class="hljs-keyword">export</span> <span class="hljs-keyword">class</span> SignalingImpl <span class="hljs-keyword">implements</span> Signaling&lt;Socket&gt; {
@@ -53,12 +59,12 @@
   }
 }
 </div></code></pre>
-<h2 id="ponto-de-conex%C3%A3o">Ponto de conexão</h2>
-<h3 id="criando-arquivo">Criando arquivo</h3>
-<pre class="hljs"><code><div>touch libs/adapters/src/lib/peer.impl.ts
+    <h2 id="ponto-de-conex%C3%A3o">Ponto de conexão</h2>
+    <h3 id="criando-arquivo">Criando arquivo</h3>
+    <pre class="hljs"><code><div>touch libs/adapters/src/lib/peer.impl.ts
 </div></code></pre>
-<h3 id="implementando">Implementando</h3>
-<pre class="hljs"><code><div><span class="hljs-keyword">import</span> {
+    <h3 id="implementando">Implementando</h3>
+    <pre class="hljs"><code><div><span class="hljs-keyword">import</span> {
   Peer,
   Socket,
   Callback,
@@ -367,13 +373,15 @@
   }
 }
 </div></code></pre>
-<h3 id="api-p%C3%BAblica">API Pública</h3>
-<pre class="hljs"><code><div><span class="hljs-keyword">export</span> * <span class="hljs-keyword">from</span> <span class="hljs-string">'./lib/signaling.impl'</span>;
+    <h3 id="api-p%C3%BAblica">API Pública</h3>
+    <pre
+      class="hljs"
+    ><code><div><span class="hljs-keyword">export</span> * <span class="hljs-keyword">from</span> <span class="hljs-string">'./lib/signaling.impl'</span>;
 <span class="hljs-keyword">export</span> * <span class="hljs-keyword">from</span> <span class="hljs-string">'./lib/peer.impl'</span>;
 </div></code></pre>
 
-<nav style="display: flex; justify-content: flex-end;">
-  <h1><a href="./gateway.html">Gateway ></a></h1>
-</nav>
-</body>
+    <nav style="display: flex; justify-content: flex-end">
+      <h1><a href="./gateway.html">Gateway ></a></h1>
+    </nav>
+  </body>
 </html>
