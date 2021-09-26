@@ -1,25 +1,25 @@
 import { Observable } from 'rxjs';
 
-import { PeerUiState, SignalMessage } from './interfaces';
-import { Callback, PeerEvent, PeerEventCallback, PeerEventMap } from './types';
+import { EventEmitter, PeerUiState, SignalMessage } from './interfaces';
+import { Callback, PeerEventMap } from './types';
 
 export abstract class Peer {
   abstract uuid?: string;
   abstract meet?: string;
 
-  abstract conn: RTCPeerConnection;
+  abstract uiState: PeerUiState;
 
   abstract stream: MediaStream;
   abstract remote?: MediaStream;
-
-  abstract uiState: PeerUiState;
+  
+  abstract conn: RTCPeerConnection;
 
   abstract receiveBuffer: ArrayBuffer[];
   public abstract receivedSize: number;
   public abstract progress$: Observable<number>;
 
-  abstract readonly events: PeerEventCallback<PeerEvent>;
-
+  abstract readonly event: EventEmitter<PeerEventMap>;
+  
   public abstract on<K extends keyof PeerEventMap>(
     key: K,
     fn: Callback<PeerEventMap[K]>

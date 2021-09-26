@@ -1,6 +1,6 @@
 :host {
   flex: 1;
-  margin: 20px;
+  padding: 20px;
   display: flex;
   align-items: center;
   flex-direction: column;
@@ -8,7 +8,7 @@
 }
 
 .container {
-  padding: 8px;
+  padding: 0px;
   width: 100%;
   max-width: 1920px;
   max-height: 1080px;

@@ -1,3 +1,4 @@
+import { EventEmitterImpl } from './event-emitter.impl';
 import { BehaviorSubject } from 'rxjs';
 import {
   Peer,
@@ -7,31 +8,30 @@ import {
   PeerUiState,
   PeerEventMap,
   SignalMessage,
-  PeerEventCallback,
 } from '@webrtc/ports';
 
 export class PeerImpl implements Peer {
   user?: string | undefined;
   meet?: string | undefined;
 
-  conn: RTCPeerConnection;
+  uiState: PeerUiState;
 
   stream: MediaStream;
   remote?: MediaStream | undefined;
 
-  uiState: PeerUiState;
+  conn: RTCPeerConnection;
 
   receiveMeta?: string;
   receiveBuffer: ArrayBuffer[] = [];
   public receivedSize = 0;
-  
+
   private _progress = new BehaviorSubject<number>(0);
   public progress$ = this._progress.asObservable();
 
   private receiveChannel!: RTCDataChannel;
   private sendChannel!: RTCDataChannel;
 
-  events: PeerEventCallback<keyof PeerEventMap>;
+  event: EventEmitterImpl;
 
   constructor(
     configuration: RTCConfiguration,
@@ -42,7 +42,7 @@ export class PeerImpl implements Peer {
     this.stream = new MediaStream();
     this.user = this.stream.id;
 
-    this.events = new Map();
+    this.event = new EventEmitterImpl();
 
     this.uiState = {
       audio: false,
@@ -54,7 +54,7 @@ export class PeerImpl implements Peer {
     key: K,
     fn: Callback<PeerEventMap[K]>
   ): void {
-    this.events.set(key, fn as () => void);
+    this.event.on(key, fn);
   }
 
   public connect(meet?: string): void {
@@ -90,7 +90,7 @@ export class PeerImpl implements Peer {
 
       const percentage = (offset / file.size) * 100;
       this._progress.next(percentage);
-      
+
       if (offset < file.size) {
         readSlice(offset);
       } else {
@@ -140,27 +140,25 @@ export class PeerImpl implements Peer {
     this.conn.ondatachannel = (evt) => {
       this.receiveChannel = evt.channel;
       this.receiveChannel.onmessage = (message) => {
-
         if (typeof message.data === 'string') {
           console.log(message);
-          
+
           this.receiveMeta = message.data;
-          const event = this.events.get('data');
-          if (event) event(message.data);
+
+          this.event.get('data').map((fn) => fn(message.data));
         }
 
         if (message.data instanceof ArrayBuffer) {
           this.onReceiveMessageCallback(message);
-          const event = this.events.get('data');
-          if (event) event(message.data);
+
+          this.event.get('data').map((fn) => fn(message.data));
         }
       };
     };
 
     this.sendChannel = this.conn.createDataChannel('sendDataChannel');
     this.sendChannel.onopen = () => {
-      const event = this.events.get('dataChannel');
-      if (event) event(this.sendChannel);
+      this.event.get('dataChannel').map((fn) => fn(this.sendChannel));
     };
   }
 
@@ -168,8 +166,7 @@ export class PeerImpl implements Peer {
     return (stream) => {
       this.stream = stream;
 
-      const onStreamEvent = this.events.get('stream');
-      if (onStreamEvent) onStreamEvent(stream);
+      this.event.get('stream').map((fn) => fn(stream));
 
       const [videoTrack] = this.stream.getVideoTracks();
       const [audioTrack] = this.stream.getAudioTracks();
@@ -184,8 +181,7 @@ export class PeerImpl implements Peer {
           this.remote.addTrack(track);
         }
 
-        const onTrackEvent = this.events.get('track');
-        if (onTrackEvent) onTrackEvent(track);
+        this.event.get('track').map((fn) => fn(track));
       };
 
       this.conn
@@ -232,16 +228,15 @@ export class PeerImpl implements Peer {
           .addIceCandidate(new RTCIceCandidate(ice))
           .catch(this.errorHandler);
 
-        const onCandidateEvent = this.events.get('iceCandidateChange');
-        if (onCandidateEvent) onCandidateEvent(ice);
+        this.event.get('iceCandidateChange').map((fn) => fn(ice));
       }
     };
   }
 
   getIceCandidate(): (event: RTCPeerConnectionIceEvent) => void {
     return (event) => {
-      const onIceConnectionEvent = this.events.get('iceConnectionChange');
-      if (onIceConnectionEvent) onIceConnectionEvent(event);
+
+      this.event.get('iceConnectionChange').map((fn) => fn(event));
 
       if (event.candidate != null) {
         const message = {
@@ -259,9 +254,6 @@ export class PeerImpl implements Peer {
     this.receiveBuffer.push(data);
     this.receivedSize += data.byteLength;
 
-    // console.log(data);
-    
-
     let name = '';
 
     if (this.receiveMeta) {
@@ -271,8 +263,6 @@ export class PeerImpl implements Peer {
       this._progress.next(percentage);
 
       name = filename;
-
-      
     }
     if (data.byteLength < 16384) {
       const received = new Blob(this.receiveBuffer);
