@@ -85,11 +85,13 @@ export class PeerImpl implements Peer {
 
       offset += result.byteLength;
 
-      this.event.get('progress').map((fn) => fn({
-        byteLength: result.byteLength,
-        percent: getPercentage(offset, file.size),
-        offset,
-      }));
+      this.event.get('progress').map((fn) =>
+        fn({
+          byteLength: result.byteLength,
+          percent: getPercentage(offset, file.size),
+          offset,
+        })
+      );
 
       if (offset < file.size) {
         readSlice(offset);
@@ -140,19 +142,19 @@ export class PeerImpl implements Peer {
 
     this.conn.ondatachannel = (evt) => {
       this.receiveChannel = evt.channel;
-      this.receiveChannel.onmessage = (message) => {
-        if (typeof message.data === 'string') {
-          console.log(message);
+      this.receiveChannel.onmessage = ({
+        data,
+      }: MessageEvent<ArrayBuffer | string>) => {
+        if (typeof data === 'string') {
+          this.receiveMeta = data;
 
-          this.receiveMeta = message.data;
-
-          this.event.get('data').map((fn) => fn(message.data));
+          this.event.get('message').map((fn) => fn(data));
         }
 
-        if (message.data instanceof ArrayBuffer) {
-          this.onReceiveMessageCallback(message);
+        if (data instanceof ArrayBuffer) {
+          this.onReceiveMessageCallback(data);
 
-          this.event.get('data').map((fn) => fn(message.data));
+          this.event.get('data').map((fn) => fn(data));
         }
       };
     };
@@ -250,7 +252,7 @@ export class PeerImpl implements Peer {
     };
   }
 
-  onReceiveMessageCallback({ data }: MessageEvent<ArrayBuffer>): void {
+  onReceiveMessageCallback(data: ArrayBuffer): void {
     this.receiveBuffer.push(data);
     this.receivedSize += data.byteLength;
 
@@ -260,11 +262,13 @@ export class PeerImpl implements Peer {
       const meta = this.receiveMeta?.split(';');
       const [filename, size] = meta ? meta : [];
 
-      this.event.get('progress').map(fn => fn({
-        percent: getPercentage(this.receivedSize, +size),
-        byteLength: data.byteLength,
-        offset: this.receivedSize
-      }))
+      this.event.get('progress').map((fn) =>
+        fn({
+          percent: getPercentage(this.receivedSize, +size),
+          byteLength: data.byteLength,
+          offset: this.receivedSize,
+        })
+      );
 
       name = filename;
     }
@@ -280,7 +284,7 @@ export class PeerImpl implements Peer {
       link.click();
 
       delete this.receiveMeta;
-      
+
       const progress = { byteLength: 0, percent: 0, offset: 0 };
       this.event.get('progress').map((fn) => fn(progress));
     }

@@ -41,7 +41,7 @@ export abstract class Peer {
 
   abstract getIceCandidate(): (event: RTCPeerConnectionIceEvent) => void;
 
-  abstract onReceiveMessageCallback(event: MessageEvent<ArrayBuffer>): void;
+  abstract onReceiveMessageCallback(data: ArrayBuffer): void;
 
   abstract toggleAudio(stream: MediaStream): void
 
