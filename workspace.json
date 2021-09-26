@@ -79,6 +79,17 @@
       "sourceRoot": "libs/ports/src",
       "projectType": "library",
       "targets": {
+        "build": {
+          "executor": "@nrwl/node:package",
+          "outputs": ["{options.outputPath}"],
+          "options": {
+            "outputPath": "dist/libs/ports",
+            "tsConfig": "libs/ports/tsconfig.lib.json",
+            "packageJson": "libs/ports/package.json",
+            "main": "libs/ports/src/index.ts",
+            "assets": ["libs/ports/*.md"]
+          }
+        },
         "lint": {
           "executor": "@nrwl/linter:eslint",
           "options": {

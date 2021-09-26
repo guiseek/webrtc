@@ -1,5 +1,3 @@
-import { Observable } from 'rxjs';
-
 import { EventEmitter, PeerUiState, SignalMessage } from './interfaces';
 import { Callback, PeerEventMap } from './types';
 
@@ -16,7 +14,7 @@ export abstract class Peer {
 
   abstract receiveBuffer: ArrayBuffer[];
   public abstract receivedSize: number;
-  public abstract progress$: Observable<number>;
+  // public abstract progress$: Observable<number>;
 
   abstract readonly event: EventEmitter<PeerEventMap>;
   

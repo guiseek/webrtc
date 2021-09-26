@@ -1,5 +1,5 @@
 import { EventEmitterImpl } from './event-emitter.impl';
-import { BehaviorSubject } from 'rxjs';
+import { getPercentage } from './utils/get-percentage';
 import {
   Peer,
   Socket,
@@ -24,9 +24,6 @@ export class PeerImpl implements Peer {
   receiveMeta?: string;
   receiveBuffer: ArrayBuffer[] = [];
   public receivedSize = 0;
-
-  private _progress = new BehaviorSubject<number>(0);
-  public progress$ = this._progress.asObservable();
 
   private receiveChannel!: RTCDataChannel;
   private sendChannel!: RTCDataChannel;
@@ -88,13 +85,17 @@ export class PeerImpl implements Peer {
 
       offset += result.byteLength;
 
-      const percentage = (offset / file.size) * 100;
-      this._progress.next(percentage);
+      this.event.get('progress').map((fn) => fn({
+        byteLength: result.byteLength,
+        percent: getPercentage(offset, file.size),
+        offset,
+      }));
 
       if (offset < file.size) {
         readSlice(offset);
       } else {
-        this._progress.next(0);
+        const progress = { byteLength: 0, percent: 0, offset: 0 };
+        this.event.get('progress').map((fn) => fn(progress));
       }
     };
 
@@ -235,7 +236,6 @@ export class PeerImpl implements Peer {
 
   getIceCandidate(): (event: RTCPeerConnectionIceEvent) => void {
     return (event) => {
-
       this.event.get('iceConnectionChange').map((fn) => fn(event));
 
       if (event.candidate != null) {
@@ -259,8 +259,12 @@ export class PeerImpl implements Peer {
     if (this.receiveMeta) {
       const meta = this.receiveMeta?.split(';');
       const [filename, size] = meta ? meta : [];
-      const percentage = (this.receivedSize / +size) * 100;
-      this._progress.next(percentage);
+
+      this.event.get('progress').map(fn => fn({
+        percent: getPercentage(this.receivedSize, +size),
+        byteLength: data.byteLength,
+        offset: this.receivedSize
+      }))
 
       name = filename;
     }
@@ -276,7 +280,9 @@ export class PeerImpl implements Peer {
       link.click();
 
       delete this.receiveMeta;
-      this._progress.next(0);
+      
+      const progress = { byteLength: 0, percent: 0, offset: 0 };
+      this.event.get('progress').map((fn) => fn(progress));
     }
   }
 

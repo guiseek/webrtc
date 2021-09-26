@@ -1,3 +1,5 @@
+import { DataProgress } from '../interfaces';
+
 export type PeerEventMap = {
   /**
    * A nova mídia de entrada foi negociada para um
@@ -38,7 +40,6 @@ export type PeerEventMap = {
    */
   iceConnectionChange: RTCPeerConnectionIceEvent;
 
-
   /**
    * Um novo RTCDataChannelé despachado para o script
    * em resposta ao outro par criando um canal.
@@ -50,4 +51,10 @@ export type PeerEventMap = {
    * em resposta ao outro par criando um canal.
    */
   data: ArrayBuffer | string;
+
+  /**
+   * Valores relativos a um envio de arquivos
+   * usando DataChannel, úteis para progresso
+   */
+  progress: DataProgress;
 };

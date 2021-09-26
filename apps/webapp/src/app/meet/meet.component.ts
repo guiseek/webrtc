@@ -1,5 +1,6 @@
 import { ActivatedRoute, Router } from '@angular/router';
 import { Component, OnInit } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
 import { Peer } from '@webrtc/ports';
 
 
@@ -11,6 +12,9 @@ import { Peer } from '@webrtc/ports';
 export class MeetComponent implements OnInit {
   meet: string;
 
+  private _progress = new BehaviorSubject<number>(0);
+  public progress$ = this._progress.asObservable();
+
   constructor(
     readonly route: ActivatedRoute,
     private _router: Router,
@@ -21,6 +25,11 @@ export class MeetComponent implements OnInit {
     else this.meet = '';
 
     this.peer.on('stream', console.log)
+    this.peer.on('progress', (progress) => {
+      console.log(progress);
+      const { percent } = progress
+      this._progress.next(percent);
+    })
   }
 
   ngOnInit(): void {
