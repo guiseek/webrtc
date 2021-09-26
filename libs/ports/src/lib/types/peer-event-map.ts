@@ -50,7 +50,7 @@ export type PeerEventMap = {
    * Dados recebidos via DataChannel
    */
   data: ArrayBuffer;
-  
+
   /**
    * Mensagem recebida via DataChannel
    */

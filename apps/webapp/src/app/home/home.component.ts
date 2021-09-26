@@ -22,7 +22,6 @@ export function uuid() {
   styleUrls: ['./home.component.scss'],
 })
 export class HomeComponent implements OnInit {
-  
   form = this._fb.group({
     nickname: ['', Validators.required],
     meet: ['', Validators.required],

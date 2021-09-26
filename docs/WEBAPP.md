@@ -5,9 +5,9 @@
 1. [Gateway](./GATEWAY.md)
 
 1. [Web App](./WEBAPP.md)
-    1. [Web App](./WEBAPP.md)
-    1. [Web App 2](./WEBAPP-2.md)
-    1. [Web App 3](./WEBAPP-3.md)
+   1. [Web App](./WEBAPP.md)
+   1. [Web App 2](./WEBAPP-2.md)
+   1. [Web App 3](./WEBAPP-3.md)
 
 ---
 
@@ -18,6 +18,7 @@
 ```sh
 nx generate @nrwl/angular:application --name=webapp --backendProject=gateway --e2eTestRunner=none --routing
 ```
+
 ## Rotas
 
 ### Criando o app routing
@@ -31,7 +32,6 @@ nx g m app-routing --flat --project webapp
 ```sh
 nx g c home --project webapp --skip-tests
 ```
-
 
 ### Configurando rotas
 
@@ -59,7 +59,6 @@ import { NgModule } from '@angular/core';
 export class AppRoutingModule {}
 ```
 
-
 ## Criando módulo da conferência
 
 ```sh
@@ -81,9 +80,9 @@ const routes: Routes = [{ path: ':meet', component: MeetComponent }];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class MeetRoutingModule { }
+export class MeetRoutingModule {}
 ```
 
 ### Importando app routing
@@ -98,10 +97,7 @@ import { AppRoutingModule } from './app-routing.module';
 
 @NgModule({
   declarations: [AppComponent, HomeComponent],
-  imports: [
-    BrowserModule,
-    AppRoutingModule
-  ],
+  imports: [BrowserModule, AppRoutingModule],
   providers: [],
   bootstrap: [AppComponent],
 })

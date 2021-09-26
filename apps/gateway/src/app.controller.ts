@@ -4,6 +4,6 @@ import { Controller, Get } from '@nestjs/common';
 export class AppController {
   @Get()
   getData() {
-    return  { message: 'Gateway' };
+    return { message: 'Gateway' };
   }
 }

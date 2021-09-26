@@ -1,4 +1,4 @@
 export interface PeerUiState {
-  audio: boolean
-  video: boolean
+  audio: boolean;
+  video: boolean;
 }

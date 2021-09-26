@@ -115,7 +115,7 @@ export class PeerImpl implements Peer {
       .then(this.gotStream());
 
     this.conn.onicecandidate = this.getIceCandidate();
-    
+
     this.signaling.on('message', (message) => {
       this.getSignalMessage()(message);
     });

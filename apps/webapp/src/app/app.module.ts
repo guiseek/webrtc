@@ -10,14 +10,8 @@ import { AppProviders } from './app-providers';
 
 @NgModule({
   declarations: [AppComponent, HomeComponent],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    ReactiveFormsModule
-  ],
-  providers: [
-    AppProviders.forPorts(environment)
-  ],
+  imports: [BrowserModule, AppRoutingModule, ReactiveFormsModule],
+  providers: [AppProviders.forPorts(environment)],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

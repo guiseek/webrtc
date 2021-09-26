@@ -3,8 +3,8 @@
   <head>
     <title>ADAPTERS.md</title>
     <meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
-    
-    <link href="assets/style.css" rel="stylesheet">
+
+    <link href="assets/style.css" rel="stylesheet" />
     <script src="assets/nav-pages.js"></script>
 
     <script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
@@ -26,22 +26,32 @@
     <hr />
     <h1 id="gateway">Gateway</h1>
     <h2 id="criando-a-aplica%C3%A7%C3%A3o">Criando a aplicação</h2>
-    <pre class="hljs"><code><div>nx generate @nrwl/nest:application --name=gateway
+    <pre
+      class="hljs"
+    ><code><div>nx generate @nrwl/nest:application --name=gateway
     </div></code></pre>
     <h3 id="movendo-pra-raiz">Movendo pra raiz</h3>
-    <pre class="hljs"><code><div>mv apps/gateway/src/app/app.module.ts apps/gateway/src/
+    <pre
+      class="hljs"
+    ><code><div>mv apps/gateway/src/app/app.module.ts apps/gateway/src/
     mv apps/gateway/src/app/app.controller.ts apps/gateway/src/
     </div></code></pre>
     <h3 id="removendo-o-desnecess%C3%A1rio">Removendo o desnecessário</h3>
     <pre class="hljs"><code><div>rm -rf apps/gateway/src/app
     </div></code></pre>
-    <h3 id="criando-o-gateway-de-sinaliza%C3%A7%C3%A3o">Criando o gateway de sinalização</h3>
-    <pre class="hljs"><code><div>nx generate @nrwl/nest:gateway --name=signaling --project=gateway
+    <h3 id="criando-o-gateway-de-sinaliza%C3%A7%C3%A3o">
+      Criando o gateway de sinalização
+    </h3>
+    <pre
+      class="hljs"
+    ><code><div>nx generate @nrwl/nest:gateway --name=signaling --project=gateway
     </div></code></pre>
     <h2 id="implementando">Implementando</h2>
     <h3 id="module">Module</h3>
     <p>Arquivo <code>apps/gateway/src/app.module.ts</code></p>
-    <pre class="hljs"><code><div><span class="hljs-keyword">import</span> { Module } <span class="hljs-keyword">from</span> <span class="hljs-string">'@nestjs/common'</span>;
+    <pre
+      class="hljs"
+    ><code><div><span class="hljs-keyword">import</span> { Module } <span class="hljs-keyword">from</span> <span class="hljs-string">'@nestjs/common'</span>;
     
     <span class="hljs-keyword">import</span> { AppController } <span class="hljs-keyword">from</span> <span class="hljs-string">'./app.controller'</span>;
     <span class="hljs-keyword">import</span> { SignalingGateway } <span class="hljs-keyword">from</span> <span class="hljs-string">'./signaling.gateway'</span>;
@@ -54,7 +64,9 @@
     </div></code></pre>
     <h3 id="controller">Controller</h3>
     <p>Arquivo <code>apps/gateway/src/app.controller.ts</code></p>
-    <pre class="hljs"><code><div><span class="hljs-keyword">import</span> { Controller, Get } <span class="hljs-keyword">from</span> <span class="hljs-string">'@nestjs/common'</span>;
+    <pre
+      class="hljs"
+    ><code><div><span class="hljs-keyword">import</span> { Controller, Get } <span class="hljs-keyword">from</span> <span class="hljs-string">'@nestjs/common'</span>;
     
     <span class="hljs-meta">@Controller</span>()
     <span class="hljs-keyword">export</span> <span class="hljs-keyword">class</span> AppController {
@@ -121,7 +133,9 @@
     </div></code></pre>
     <h3 id="main">Main</h3>
     <p>Arquivo <code>apps/gateway/src/main.ts</code></p>
-    <pre class="hljs"><code><div><span class="hljs-keyword">import</span> { Logger } <span class="hljs-keyword">from</span> <span class="hljs-string">'@nestjs/common'</span>;
+    <pre
+      class="hljs"
+    ><code><div><span class="hljs-keyword">import</span> { Logger } <span class="hljs-keyword">from</span> <span class="hljs-string">'@nestjs/common'</span>;
     <span class="hljs-keyword">import</span> { NestFactory } <span class="hljs-keyword">from</span> <span class="hljs-string">'@nestjs/core'</span>;
     
     <span class="hljs-keyword">import</span> { AppModule } <span class="hljs-keyword">from</span> <span class="hljs-string">'./app.module'</span>;
@@ -138,13 +152,10 @@
     
     bootstrap();
     </div></code></pre>
-    
 
-<nav style="display: flex; justify-content: space-between;">
-  <h1><a href="./index.html">< Adapters</a></h1>
-  <h1><a href="./webapp.html">Web App ></a></h1>
-</nav>
-
-
-</body>
+    <nav style="display: flex; justify-content: space-between">
+      <h1><a href="./index.html">< Adapters</a></h1>
+      <h1><a href="./webapp.html">Web App ></a></h1>
+    </nav>
+  </body>
 </html>

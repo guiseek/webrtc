@@ -9,7 +9,6 @@ import {
 import { SignalingEvent, SignalMessage } from '@webrtc/ports';
 import { Server, Socket } from 'socket.io';
 
-
 @WebSocketGateway({ cors: true })
 export class SignalingGateway implements OnGatewayConnection {
   @WebSocketServer()

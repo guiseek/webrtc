@@ -5,11 +5,12 @@
 1. [Gateway](./GATEWAY.md)
 
 1. [Web App](./WEBAPP.md)
-    1. [Web App](./WEBAPP.md)
-    1. [Web App 2](./WEBAPP-2.md)
-    1. [Web App 3](./WEBAPP-3.md)
+   1. [Web App](./WEBAPP.md)
+   1. [Web App 2](./WEBAPP-2.md)
+   1. [Web App 3](./WEBAPP-3.md)
 
 ---
+
 # Web App
 
 ## Criando o app providers
@@ -80,7 +81,7 @@ export const environment: {
   imports: [BrowserModule, AppRoutingModule],
 
   providers: [AppProviders.forPorts(environment)],
-  
+
   bootstrap: [AppComponent],
 })
 export class AppModule {}
@@ -101,10 +102,16 @@ Arquivo `apps/webapp/src/index.html`
     <base href="/" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" type="image/x-icon" href="favicon.ico" />
-    <link href="https://fonts.googleapis.com/css2?family=Material+Icons" rel="stylesheet">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro&display=swap" rel="stylesheet">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Icons"
+      rel="stylesheet"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro&display=swap"
+      rel="stylesheet"
+    />
   </head>
   <body>
     <webrtc-root></webrtc-root>
