@@ -114,6 +114,8 @@ export class PeerImpl implements Peer {
       .getUserMedia(this.getConfig())
       .then(this.gotStream());
 
+    this.conn.onicecandidate = this.getIceCandidate();
+    
     this.signaling.on('message', (message) => {
       this.getSignalMessage()(message);
     });

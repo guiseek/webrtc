@@ -8,8 +8,7 @@ export const environment: {
   iceServers: RTCIceServer[];
 } = {
   production: false,
-  // signaling: 'http://localhost:3333',
-  signaling: 'https://gateway.p2p.works',
+  signaling: 'http://localhost:3333',
   
   iceServers: [
     {

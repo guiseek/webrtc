@@ -33,9 +33,9 @@ export class MeetComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.peer.on('track', console.log)
+
     this.peer.connect(this.meet);
-    this.peer.on('track', console.log)
+
   }
 
   end() {
