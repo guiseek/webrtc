@@ -3,9 +3,12 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
+    "nx": "nx",
     "start": "nx serve",
     "build": "nx build",
     "test": "nx test",
+    "ports:build": "nx run ports:build",
+    "ports:release": "nx run ports:release",
     "postinstall": "ngcc --properties es2015 browser module main"
   },
   "private": true,
