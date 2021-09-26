@@ -103,6 +103,12 @@
             "jestConfig": "libs/ports/jest.config.js",
             "passWithNoTests": true
           }
+        },
+        "release": {
+          "executor": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "npx semantic-release -e ./libs/ports/.releaserc.json"
+          }
         }
       }
     },
