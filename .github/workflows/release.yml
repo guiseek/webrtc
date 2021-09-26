@@ -1,4 +1,4 @@
-name: Push Release
+name: Release
 
 on:
   push:
@@ -20,20 +20,13 @@ jobs:
       - name: Install Dependencies
         run: npm ci
 
-      - name: Check Format
-        run: npm run format:check -- --base origin/main
-
-      - name: Lint Workspace & Code
-        run: npm run affected:lint -- --base origin/main
-
-      - name: Unit Tests
-        run: npm run affected:test -- --base origin/main
-
-      # - name: Test Builds
-      #   run: npm run affected:build -- --base origin/main
+      - uses: mansagroup/nrwl-nx-action@v2
+        with:
+          targets: lint,build
+          projects: ports,adapters
 
       - name: Build, Release on GitHub & Publish to NPM
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: npm run release
+        run: npm run affected:release

@@ -15,5 +15,4 @@ export class SignalingImpl implements Signaling<Socket> {
   emit<T>(event: string, message: T) {
     this.conn.emit(event, message);
   }
-  
 }

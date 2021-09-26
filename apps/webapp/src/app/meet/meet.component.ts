@@ -3,11 +3,10 @@ import { Component, OnInit } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { Peer } from '@webrtc/ports';
 
-
 @Component({
   selector: 'webrtc-meet',
   templateUrl: './meet.component.html',
-  styleUrls: ['./meet.component.scss']
+  styleUrls: ['./meet.component.scss'],
 })
 export class MeetComponent implements OnInit {
   meet: string;
@@ -24,18 +23,16 @@ export class MeetComponent implements OnInit {
     if (meet) this.meet = meet;
     else this.meet = '';
 
-    this.peer.on('stream', console.log)
+    this.peer.on('stream', console.log);
     this.peer.on('progress', (progress) => {
       console.log(progress);
-      const { percent } = progress
+      const { percent } = progress;
       this._progress.next(percent);
-    })
+    });
   }
 
   ngOnInit(): void {
-
     this.peer.connect(this.meet);
-
   }
 
   end() {

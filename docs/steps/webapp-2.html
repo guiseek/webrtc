@@ -3,8 +3,8 @@
   <head>
     <title>ADAPTERS.md</title>
     <meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
-    
-    <link href="assets/style.css" rel="stylesheet">
+
+    <link href="assets/style.css" rel="stylesheet" />
     <script src="assets/nav-pages.js"></script>
 
     <script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
@@ -21,16 +21,21 @@
       });
     </script>
 
-
     <nav-pages></nav-pages>
 
-<hr>
-<h1 id="web-app">Web App</h1>
-<h2 id="criando-o-app-providers">Criando o app providers</h2>
-<pre class="hljs"><code><div>nx g class app-providers --project webapp --skip-tests
+    <hr />
+    <h1 id="web-app">Web App</h1>
+    <h2 id="criando-o-app-providers">Criando o app providers</h2>
+    <pre
+      class="hljs"
+    ><code><div>nx g class app-providers --project webapp --skip-tests
 </div></code></pre>
-<h3 id="relacionando-ports-e-adapters-como-providers">Relacionando ports e adapters como providers</h3>
-<pre class="hljs"><code><div><span class="hljs-keyword">import</span> { PeerImpl, SignalingImpl } <span class="hljs-keyword">from</span> <span class="hljs-string">'@webrtc/adapters'</span>;
+    <h3 id="relacionando-ports-e-adapters-como-providers">
+      Relacionando ports e adapters como providers
+    </h3>
+    <pre
+      class="hljs"
+    ><code><div><span class="hljs-keyword">import</span> { PeerImpl, SignalingImpl } <span class="hljs-keyword">from</span> <span class="hljs-string">'@webrtc/adapters'</span>;
 <span class="hljs-keyword">import</span> { Peer, Signaling, Socket } <span class="hljs-keyword">from</span> <span class="hljs-string">'@webrtc/ports'</span>;
 
 <span class="hljs-keyword">export</span> <span class="hljs-keyword">class</span> AppProviders {
@@ -59,8 +64,12 @@
   }
 }
 </div></code></pre>
-<h3 id="adicionando-configura%C3%A7%C3%A3o-do-ambiente">Adicionando configuração do ambiente</h3>
-<pre class="hljs"><code><div><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> environment: {
+    <h3 id="adicionando-configura%C3%A7%C3%A3o-do-ambiente">
+      Adicionando configuração do ambiente
+    </h3>
+    <pre
+      class="hljs"
+    ><code><div><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> environment: {
   production: <span class="hljs-built_in">boolean</span>;
   signaling: <span class="hljs-built_in">string</span>;
   iceServers: RTCIceServer[];
@@ -77,8 +86,8 @@
   ],
 };
 </div></code></pre>
-<h3 id="importando-providers">Importando providers</h3>
-<pre class="hljs"><code><div><span class="hljs-meta">@NgModule</span>({
+    <h3 id="importando-providers">Importando providers</h3>
+    <pre class="hljs"><code><div><span class="hljs-meta">@NgModule</span>({
   declarations: [AppComponent, HomeComponent],
   imports: [BrowserModule, AppRoutingModule],
 
@@ -88,10 +97,12 @@
 })
 <span class="hljs-keyword">export</span> <span class="hljs-keyword">class</span> AppModule {}
 </div></code></pre>
-<h2 id="app">App</h2>
-<h3 id="index">Index</h3>
-<p>Arquivo <code>apps/webapp/src/index.html</code></p>
-<pre class="hljs"><code><div><span class="hljs-meta">&lt;!DOCTYPE <span class="hljs-meta-keyword">html</span>&gt;</span>
+    <h2 id="app">App</h2>
+    <h3 id="index">Index</h3>
+    <p>Arquivo <code>apps/webapp/src/index.html</code></p>
+    <pre
+      class="hljs"
+    ><code><div><span class="hljs-meta">&lt;!DOCTYPE <span class="hljs-meta-keyword">html</span>&gt;</span>
 <span class="hljs-tag">&lt;<span class="hljs-name">html</span> <span class="hljs-attr">lang</span>=<span class="hljs-string">"pt-br"</span>&gt;</span>
   <span class="hljs-tag">&lt;<span class="hljs-name">head</span>&gt;</span>
     <span class="hljs-tag">&lt;<span class="hljs-name">meta</span> <span class="hljs-attr">charset</span>=<span class="hljs-string">"utf-8"</span> /&gt;</span>
@@ -109,15 +120,17 @@
   <span class="hljs-tag">&lt;/<span class="hljs-name">body</span>&gt;</span>
 <span class="hljs-tag">&lt;/<span class="hljs-name">html</span>&gt;</span>
 </div></code></pre>
-<h3 id="component">Component</h3>
-<p>Arquivo <code>apps/webapp/src/app/app.component.html</code></p>
-<pre class="hljs"><code><div><span class="hljs-tag">&lt;<span class="hljs-name">main</span>&gt;</span>
+    <h3 id="component">Component</h3>
+    <p>Arquivo <code>apps/webapp/src/app/app.component.html</code></p>
+    <pre
+      class="hljs"
+    ><code><div><span class="hljs-tag">&lt;<span class="hljs-name">main</span>&gt;</span>
   <span class="hljs-tag">&lt;<span class="hljs-name">router-outlet</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">router-outlet</span>&gt;</span>
 <span class="hljs-tag">&lt;/<span class="hljs-name">main</span>&gt;</span>
 </div></code></pre>
-<h3 id="estilos">Estilos</h3>
-<p>Arquivo <code>apps/webapp/src/styles.scss</code></p>
-<pre class="hljs"><code><div><span class="hljs-selector-tag">html</span>,
+    <h3 id="estilos">Estilos</h3>
+    <p>Arquivo <code>apps/webapp/src/styles.scss</code></p>
+    <pre class="hljs"><code><div><span class="hljs-selector-tag">html</span>,
 <span class="hljs-selector-tag">body</span> {
   <span class="hljs-attribute">height</span>: <span class="hljs-number">100%</span>;
 }
@@ -136,8 +149,8 @@
   <span class="hljs-attribute">border-radius</span>: <span class="hljs-number">8px</span>;
 }
 </div></code></pre>
-<p>Arquivo <code>apps/webapp/src/app/app.component.scss</code></p>
-<pre class="hljs"><code><div>:host {
+    <p>Arquivo <code>apps/webapp/src/app/app.component.scss</code></p>
+    <pre class="hljs"><code><div>:host {
   width: <span class="hljs-number">100%</span>;
   <span class="hljs-attribute">height</span>: <span class="hljs-number">100%</span>;
   <span class="hljs-attribute">display</span>: flex;
@@ -166,18 +179,20 @@
   }
 }
 </div></code></pre>
-<h2 id="home">Home</h2>
-<h3 id="importando-reactive-forms">Importando reactive forms</h3>
-<p>Arquivo <code>apps/webapp/src/app/app.module.ts</code></p>
-<pre class="hljs"><code><div>  imports: [
+    <h2 id="home">Home</h2>
+    <h3 id="importando-reactive-forms">Importando reactive forms</h3>
+    <p>Arquivo <code>apps/webapp/src/app/app.module.ts</code></p>
+    <pre class="hljs"><code><div>  imports: [
     ...
     ReactiveFormsModule,
     ...
   ]
 </div></code></pre>
-<h3 id="criando-form-de-entrada">Criando form de entrada</h3>
-<p>Arquivo <code>apps/webapp/src/app/home/home.component.ts</code></p>
-<pre class="hljs"><code><div><span class="hljs-keyword">import</span> { Component, OnInit } <span class="hljs-keyword">from</span> <span class="hljs-string">'@angular/core'</span>;
+    <h3 id="criando-form-de-entrada">Criando form de entrada</h3>
+    <p>Arquivo <code>apps/webapp/src/app/home/home.component.ts</code></p>
+    <pre
+      class="hljs"
+    ><code><div><span class="hljs-keyword">import</span> { Component, OnInit } <span class="hljs-keyword">from</span> <span class="hljs-string">'@angular/core'</span>;
 <span class="hljs-keyword">import</span> { FormBuilder, FormGroup, Validators } <span class="hljs-keyword">from</span> <span class="hljs-string">'@angular/forms'</span>;
 <span class="hljs-keyword">import</span> { Router } <span class="hljs-keyword">from</span> <span class="hljs-string">'@angular/router'</span>;
 
@@ -220,8 +235,10 @@
   }
 }
 </div></code></pre>
-<p>Arquivo <code>apps/webapp/src/app/home/home.component.html</code></p>
-<pre class="hljs"><code><div><span class="hljs-tag">&lt;<span class="hljs-name">form</span> [<span class="hljs-attr">formGroup</span>]=<span class="hljs-string">"form"</span> (<span class="hljs-attr">ngSubmit</span>)=<span class="hljs-string">"onSubmit(form)"</span>&gt;</span>
+    <p>Arquivo <code>apps/webapp/src/app/home/home.component.html</code></p>
+    <pre
+      class="hljs"
+    ><code><div><span class="hljs-tag">&lt;<span class="hljs-name">form</span> [<span class="hljs-attr">formGroup</span>]=<span class="hljs-string">"form"</span> (<span class="hljs-attr">ngSubmit</span>)=<span class="hljs-string">"onSubmit(form)"</span>&gt;</span>
   <span class="hljs-tag">&lt;<span class="hljs-name">section</span>&gt;</span>
     <span class="hljs-tag">&lt;<span class="hljs-name">label</span>&gt;</span>Sala<span class="hljs-tag">&lt;/<span class="hljs-name">label</span>&gt;</span>
     <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">matInput</span> <span class="hljs-attr">formControlName</span>=<span class="hljs-string">"meet"</span> <span class="hljs-attr">placeholder</span>=<span class="hljs-string">"Sala"</span> /&gt;</span>
@@ -244,8 +261,8 @@
   <span class="hljs-tag">&lt;/<span class="hljs-name">footer</span>&gt;</span>
 <span class="hljs-tag">&lt;/<span class="hljs-name">form</span>&gt;</span>
 </div></code></pre>
-<p>Arquivo <code>apps/webapp/src/app/home/home.component.scss</code></p>
-<pre class="hljs"><code><div>:host {
+    <p>Arquivo <code>apps/webapp/src/app/home/home.component.scss</code></p>
+    <pre class="hljs"><code><div>:host {
   flex: <span class="hljs-number">1</span>;
   <span class="hljs-attribute">display</span>: flex;
   <span class="hljs-attribute">justify-content</span>: center;
@@ -289,14 +306,9 @@
 }
 </div></code></pre>
 
-
-
-<nav style="display: flex; justify-content: space-between;">
-  <h1><a href="./webapp.html">< Web App</a></h1>
-  <h1><a href="./webapp-3.html">Web App - Meet ></a></h1>
-</nav>
-
-
-
-</body>
+    <nav style="display: flex; justify-content: space-between">
+      <h1><a href="./webapp.html">< Web App</a></h1>
+      <h1><a href="./webapp-3.html">Web App - Meet ></a></h1>
+    </nav>
+  </body>
 </html>

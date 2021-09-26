@@ -5,9 +5,9 @@
 1. [Gateway](./GATEWAY.md)
 
 1. [Web App](./WEBAPP.md)
-    1. [Web App](./WEBAPP.md)
-    1. [Web App 2](./WEBAPP-2.md)
-    1. [Web App 3](./WEBAPP-3.md)
+   1. [Web App](./WEBAPP.md)
+   1. [Web App 2](./WEBAPP-2.md)
+   1. [Web App 3](./WEBAPP-3.md)
 
 ---
 
@@ -28,7 +28,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Component, OnInit } from '@angular/core';
 import { Peer } from '@webrtc/ports';
 
-
 @Component({
   selector: 'webrtc-meet',
   templateUrl: './meet.component.html',
@@ -36,7 +35,7 @@ import { Peer } from '@webrtc/ports';
 })
 export class MeetComponent implements OnInit {
   meet: string;
-  
+
   constructor(
     readonly route: ActivatedRoute,
     private _router: Router,

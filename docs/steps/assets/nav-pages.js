@@ -1,4 +1,4 @@
-class NavPages extends HTMLElement {  
+class NavPages extends HTMLElement {
   template = `
     <style>
       a:link,
@@ -28,11 +28,11 @@ class NavPages extends HTMLElement {
         </li>
       </ol>
     </nav>
-  `
+  `;
 
   connectedCallback() {
-    const shadow = this.attachShadow({ mode: 'open' })
-    shadow.innerHTML = this.template
+    const shadow = this.attachShadow({ mode: 'open' });
+    shadow.innerHTML = this.template;
   }
 }
-customElements.define('nav-pages', NavPages)
+customElements.define('nav-pages', NavPages);

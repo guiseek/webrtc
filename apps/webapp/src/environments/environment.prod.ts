@@ -5,7 +5,7 @@ export const environment: {
 } = {
   production: false,
   signaling: 'https://gateway.p2p.works',
-  
+
   iceServers: [
     {
       urls: ['stun:54.90.98.123:3478'],

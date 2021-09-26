@@ -9,7 +9,7 @@ export abstract class Peer {
 
   abstract stream: MediaStream;
   abstract remote?: MediaStream;
-  
+
   abstract conn: RTCPeerConnection;
 
   abstract receiveBuffer: ArrayBuffer[];
@@ -17,7 +17,7 @@ export abstract class Peer {
   // public abstract progress$: Observable<number>;
 
   abstract readonly event: EventEmitter<PeerEventMap>;
-  
+
   public abstract on<K extends keyof PeerEventMap>(
     key: K,
     fn: Callback<PeerEventMap[K]>
@@ -29,7 +29,7 @@ export abstract class Peer {
 
   public abstract upload(message: File): void;
 
-  abstract signalUp(): Promise<void>
+  abstract signalUp(): Promise<void>;
 
   abstract listen(): void;
 
@@ -43,9 +43,9 @@ export abstract class Peer {
 
   abstract onReceiveMessageCallback(data: ArrayBuffer): void;
 
-  abstract toggleAudio(stream: MediaStream): void
+  abstract toggleAudio(stream: MediaStream): void;
 
-  abstract toggleVideo(stream: MediaStream): void
+  abstract toggleVideo(stream: MediaStream): void;
 
   abstract errorHandler(error: Event): void;
 

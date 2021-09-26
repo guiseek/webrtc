@@ -3,10 +3,9 @@
   <head>
     <title>ADAPTERS.md</title>
     <meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
-    
-    <link href="assets/style.css" rel="stylesheet">
-    <script src="assets/nav-pages.js"></script>
 
+    <link href="assets/style.css" rel="stylesheet" />
+    <script src="assets/nav-pages.js"></script>
 
     <script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
   </head>
@@ -23,15 +22,20 @@
     </script>
 
     <nav-pages></nav-pages>
-    
-<hr>
-<h1 id="web-app">Web App</h1>
-<h2 id="meet">Meet</h2>
-<h3 id="implementando-confer%C3%AAncia">Implementando conferência</h3>
-<p>Perceba quem nós estamos injetando no construtor, não é a implementação, mas a abstração.</p>
-<p>Isso permite a mudança de implementação sem afetar a aplicação.</p>
-<p>Arquivo <code>apps/webapp/src/app/meet/meet.component.ts</code></p>
-<pre class="hljs"><code><div><span class="hljs-keyword">import</span> { ActivatedRoute, Router } <span class="hljs-keyword">from</span> <span class="hljs-string">'@angular/router'</span>;
+
+    <hr />
+    <h1 id="web-app">Web App</h1>
+    <h2 id="meet">Meet</h2>
+    <h3 id="implementando-confer%C3%AAncia">Implementando conferência</h3>
+    <p>
+      Perceba quem nós estamos injetando no construtor, não é a implementação,
+      mas a abstração.
+    </p>
+    <p>Isso permite a mudança de implementação sem afetar a aplicação.</p>
+    <p>Arquivo <code>apps/webapp/src/app/meet/meet.component.ts</code></p>
+    <pre
+      class="hljs"
+    ><code><div><span class="hljs-keyword">import</span> { ActivatedRoute, Router } <span class="hljs-keyword">from</span> <span class="hljs-string">'@angular/router'</span>;
 <span class="hljs-keyword">import</span> { Component, OnInit } <span class="hljs-keyword">from</span> <span class="hljs-string">'@angular/core'</span>;
 <span class="hljs-keyword">import</span> { Peer } <span class="hljs-keyword">from</span> <span class="hljs-string">'@webrtc/ports'</span>;
 
@@ -64,12 +68,19 @@
   }
 }
 </div></code></pre>
-<h3 id="estilos">Estilos</h3>
-<h4 id="altera-tipo-do-arquivo-de-css-para-scss">Altera tipo do arquivo de CSS para SCSS</h4>
-<p>No diretório <code>apps/webapp/src/app/meet/</code>, alterar de <code>meet.component.css</code> para <code>meet.component.scss</code> e então descomentar linha <code>9</code> no arquivo <code>meet.component.ts</code></p>
-<h4 id="adicionando-estilos">Adicionando estilos</h4>
-<p>Arquivo <code>apps/webapp/src/app/meet/meet.component.scss</code></p>
-<pre class="hljs"><code><div>:host {
+    <h3 id="estilos">Estilos</h3>
+    <h4 id="altera-tipo-do-arquivo-de-css-para-scss">
+      Altera tipo do arquivo de CSS para SCSS
+    </h4>
+    <p>
+      No diretório <code>apps/webapp/src/app/meet/</code>, alterar de
+      <code>meet.component.css</code> para <code>meet.component.scss</code> e
+      então descomentar linha <code>9</code> no arquivo
+      <code>meet.component.ts</code>
+    </p>
+    <h4 id="adicionando-estilos">Adicionando estilos</h4>
+    <p>Arquivo <code>apps/webapp/src/app/meet/meet.component.scss</code></p>
+    <pre class="hljs"><code><div>:host {
   flex: <span class="hljs-number">1</span>;
   <span class="hljs-attribute">margin</span>: <span class="hljs-number">20px</span>;
   <span class="hljs-attribute">display</span>: flex;
@@ -198,9 +209,11 @@
   <span class="hljs-attribute">bottom</span>: <span class="hljs-number">20px</span>;
 }
 </div></code></pre>
-<h4 id="template">Template</h4>
-<p>Arquivo <code>apps/webapp/src/app/meet/meet.component.html</code></p>
-<pre class="hljs"><code><div><span class="hljs-tag">&lt;<span class="hljs-name">section</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"container"</span> <span class="hljs-attr">id</span>=<span class="hljs-string">"remote"</span>&gt;</span>
+    <h4 id="template">Template</h4>
+    <p>Arquivo <code>apps/webapp/src/app/meet/meet.component.html</code></p>
+    <pre
+      class="hljs"
+    ><code><div><span class="hljs-tag">&lt;<span class="hljs-name">section</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"container"</span> <span class="hljs-attr">id</span>=<span class="hljs-string">"remote"</span>&gt;</span>
   <span class="hljs-tag">&lt;<span class="hljs-name">video</span> <span class="hljs-attr">autoplay</span> <span class="hljs-attr">playsinline</span> [<span class="hljs-attr">srcObject</span>]=<span class="hljs-string">"peer.remote"</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">video</span>&gt;</span>
 <span class="hljs-tag">&lt;/<span class="hljs-name">section</span>&gt;</span>
 
@@ -246,12 +259,8 @@
 <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
 </div></code></pre>
 
-
-<nav style="display: flex; justify-content: space-between;">
-  <h1><a href="./webapp-2.html">< Web App - Home</a></h1>
-</nav>
-
-
-
-</body>
+    <nav style="display: flex; justify-content: space-between">
+      <h1><a href="./webapp-2.html">< Web App - Home</a></h1>
+    </nav>
+  </body>
 </html>
