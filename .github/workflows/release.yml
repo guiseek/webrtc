@@ -22,7 +22,7 @@ jobs:
 
       - uses: mansagroup/nrwl-nx-action@v2
         with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
           targets: lint,build,release
           projects: ports,adapters
