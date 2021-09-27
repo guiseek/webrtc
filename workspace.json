@@ -6,6 +6,17 @@
       "sourceRoot": "libs/adapters/src",
       "projectType": "library",
       "targets": {
+        "build": {
+          "executor": "@nrwl/node:package",
+          "outputs": ["{options.outputPath}"],
+          "options": {
+            "outputPath": "dist/libs/adapters",
+            "tsConfig": "libs/adapters/tsconfig.lib.json",
+            "packageJson": "libs/adapters/package.json",
+            "main": "libs/adapters/src/index.ts",
+            "assets": ["libs/adapters/*.md"]
+          }
+        },
         "lint": {
           "executor": "@nrwl/linter:eslint",
           "outputs": ["{options.outputFile}"],
@@ -19,6 +30,12 @@
           "options": {
             "jestConfig": "libs/adapters/jest.config.js",
             "passWithNoTests": true
+          }
+        },
+        "release": {
+          "executor": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "npx semantic-release -e ./libs/adapters/.releaserc.json"
           }
         }
       }

@@ -22,11 +22,7 @@ jobs:
 
       - uses: mansagroup/nrwl-nx-action@v2
         with:
-          targets: lint,build
-          projects: ports,adapters
-
-      - name: Build, Release on GitHub & Publish to NPM
-        env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: npm run affected:release
+          targets: lint,build,release
+          projects: ports,adapters

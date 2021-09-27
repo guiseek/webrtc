@@ -1,10 +1,10 @@
 {
-  "name": "@webp2p/ports",
+  "name": "@webp2p/adapters",
   "version": "0.0.1",
   "private": false,
   "repository": {
     "type": "git",
     "url": "https://github.com/guiseek/webrtc.git",
-    "directory": "libs/ports"
+    "directory": "libs/adapters"
   }
 }

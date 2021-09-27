@@ -1,5 +1,5 @@
-import { PeerImpl, SignalingImpl } from '@webrtc/adapters';
-import { Peer, Signaling, Socket } from '@webrtc/ports';
+import { PeerImpl, SignalingImpl } from '@webp2p/adapters';
+import { Peer, Signaling, Socket } from '@webp2p/ports';
 
 export class AppProviders {
   static forPorts({

@@ -8,7 +8,7 @@ import {
   PeerUiState,
   PeerEventMap,
   SignalMessage,
-} from '@webrtc/ports';
+} from '@webp2p/ports';
 
 export class PeerImpl implements Peer {
   user?: string | undefined;

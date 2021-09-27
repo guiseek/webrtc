@@ -15,9 +15,8 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@webrtc-ports": ["libs/webrtc-ports/src/index.ts"],
-      "@webrtc/adapters": ["libs/adapters/src/index.ts"],
-      "@webrtc/ports": ["libs/ports/src/index.ts"]
+      "@webp2p/adapters": ["libs/adapters/src/index.ts"],
+      "@webp2p/ports": ["libs/ports/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

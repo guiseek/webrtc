@@ -6,7 +6,7 @@ import {
   WebSocketGateway,
   OnGatewayConnection,
 } from '@nestjs/websockets';
-import { SignalingEvent, SignalMessage } from '@webrtc/ports';
+import { SignalingEvent, SignalMessage } from '@webp2p/ports';
 import { Server, Socket } from 'socket.io';
 
 @WebSocketGateway({ cors: true })

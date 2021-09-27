@@ -1,0 +1,19 @@
+{
+  "extends": "../../.releaserc.json",
+  "tagFormat": "adapters-v${version}",
+  "plugins": [
+    [
+      "@guiseek/tool-release",
+      {
+        "project": "adapters"
+      }
+    ],
+    [
+      "@semantic-release/npm",
+      {
+        "pkgRoot": "dist/libs/adapters"
+      }
+    ],
+    "@semantic-release/github"
+  ]
+}

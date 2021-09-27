@@ -1,4 +1,4 @@
-import { Signaling, SignalMessage } from '@webrtc/ports';
+import { Signaling, SignalMessage } from '@webp2p/ports';
 import { io, Socket } from 'socket.io-client';
 
 export class SignalingImpl implements Signaling<Socket> {

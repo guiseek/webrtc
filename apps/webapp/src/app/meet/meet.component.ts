@@ -1,7 +1,7 @@
 import { ActivatedRoute, Router } from '@angular/router';
 import { Component, OnInit } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { Peer } from '@webrtc/ports';
+import { Peer } from '@webp2p/ports';
 
 @Component({
   selector: 'webrtc-meet',
