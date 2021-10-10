@@ -35,6 +35,8 @@ touch libs/adapters/src/lib/signaling.impl.ts
 
 ### Implementando
 
+Arquivo `libs/adapters/src/lib/signaling.impl.ts`
+
 ```ts
 import { Signaling, SignalMessage } from '@webrtc/ports';
 import { io, Socket } from 'socket.io-client';
@@ -65,6 +67,8 @@ touch libs/adapters/src/lib/peer.impl.ts
 ```
 
 ### Implementando
+
+Arquivo `libs/adapters/src/lib/peer.impl.ts`
 
 ```ts
 import {
@@ -377,7 +381,20 @@ export class PeerImpl implements Peer {
 
 ### API Pública
 
+Arquivo `libs/adapters/src/index.ts`
+
 ```ts
 export * from './lib/signaling.impl';
 export * from './lib/peer.impl';
 ```
+
+
+<center>
+
+[Ports &nbsp; 🔙 ](./PORTS.md) - [ 🔜 &nbsp; Gateway](./GATEWAY.md)
+
+</center>
+
+---
+
+[Guilherme Visi Siquinelli](https://guiseek.dev) &copy; 2021

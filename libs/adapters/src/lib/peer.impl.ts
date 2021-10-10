@@ -3,27 +3,34 @@ import { getPercentage } from './utils/get-percentage';
 import {
   Peer,
   Socket,
-  Callback,
   Signaling,
   PeerUiState,
-  PeerEventMap,
   SignalMessage,
 } from '@webp2p/ports';
+import { DataTransferImpl } from './data-transfer.impl';
+
+export function uuid() {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+    const r = (Math.random() * 16) | 0;
+    const v = c == 'x' ? r : (r & 0x3) | 0x8;
+    return v.toString(16);
+  });
+}
 
 export class PeerImpl implements Peer {
-  user?: string | undefined;
-  meet?: string | undefined;
+  user: string;
+  meet?: string;
 
   uiState: PeerUiState;
 
   stream: MediaStream;
-  remote?: MediaStream | undefined;
+  remote?: MediaStream;
 
   conn: RTCPeerConnection;
 
-  receiveMeta?: string;
+  private receiveMeta?: string;
   receiveBuffer: ArrayBuffer[] = [];
-  public receivedSize = 0;
+  receivedSize = 0;
 
   private receiveChannel!: RTCDataChannel;
   private sendChannel!: RTCDataChannel;
@@ -47,66 +54,18 @@ export class PeerImpl implements Peer {
     };
   }
 
-  public on<K extends keyof PeerEventMap>(
-    key: K,
-    fn: Callback<PeerEventMap[K]>
-  ): void {
-    this.event.on(key, fn);
-  }
-
   public connect(meet?: string): void {
-    if (meet) {
-      this.meet = meet;
-    }
+    if (meet) this.meet = meet;
 
     this.signalUp();
-    this.listen();
+    this.waitData();
   }
 
-  public send(message: string): void {
-    this.sendChannel.send(message);
-  }
-
-  public upload(file: File): void {
-    this.sendChannel.binaryType = 'arraybuffer';
-
-    const chunkSize = 16384;
-    const fileReader = new FileReader();
-    let offset = 0;
-
-    fileReader.onload = ({ target }: ProgressEvent<FileReader>) => {
-      const result = target?.result as ArrayBuffer;
-
-      if (offset === 0) {
-        this.send(`${file.name};${file.size}`);
-      }
-
-      this.sendChannel.send(result);
-
-      offset += result.byteLength;
-
-      this.event.get('progress').map((fn) =>
-        fn({
-          byteLength: result.byteLength,
-          percent: getPercentage(offset, file.size),
-          offset,
-        })
-      );
-
-      if (offset < file.size) {
-        readSlice(offset);
-      } else {
-        const progress = { byteLength: 0, percent: 0, offset: 0 };
-        this.event.get('progress').map((fn) => fn(progress));
-      }
+  openChannel(fn: (channel: DataTransferImpl) => void) {
+    const channel = this.conn.createDataChannel(uuid());
+    channel.onopen = () => {
+      fn(new DataTransferImpl(channel));
     };
-
-    const readSlice = (o: number) => {
-      const slice = file.slice(offset, o + chunkSize);
-      fileReader.readAsArrayBuffer(slice);
-    };
-
-    readSlice(0);
   }
 
   async signalUp(): Promise<void> {
@@ -139,8 +98,10 @@ export class PeerImpl implements Peer {
     return { audio, video } as MediaStreamConstraints;
   }
 
-  listen(): void {
+  waitData(): void {
     this.conn.onicecandidate = this.getIceCandidate();
+
+    this.conn.onconnectionstatechange = this.onConnectionChange();
 
     this.conn.ondatachannel = (evt) => {
       this.receiveChannel = evt.channel;
@@ -254,6 +215,61 @@ export class PeerImpl implements Peer {
     };
   }
 
+  onConnectionChange(): (event: Event) => void {
+    return ({ currentTarget }: Event) => {
+      const peer = currentTarget as RTCPeerConnection;
+
+      this.event.get('connectionChange').map((fn) => fn(peer.connectionState));
+    };
+  }
+
+
+  public send(message: string): void {
+    this.sendChannel.send(message);
+  }
+
+  public upload(file: File): void {
+    this.sendChannel.binaryType = 'arraybuffer';
+
+    const chunkSize = 16384;
+    const fileReader = new FileReader();
+    let offset = 0;
+
+    fileReader.onload = ({ target }: ProgressEvent<FileReader>) => {
+      const result = target?.result as ArrayBuffer;
+
+      if (offset === 0) {
+        this.send(`${file.name};${file.size}`);
+      }
+
+      this.sendChannel.send(result);
+
+      offset += result.byteLength;
+
+      this.event.get('progress').map((fn) =>
+        fn({
+          byteLength: result.byteLength,
+          percent: getPercentage(offset, file.size),
+          offset,
+        })
+      );
+
+      if (offset < file.size) {
+        readSlice(offset);
+      } else {
+        const progress = { byteLength: 0, percent: 0, offset: 0 };
+        this.event.get('progress').map((fn) => fn(progress));
+      }
+    };
+
+    const readSlice = (o: number) => {
+      const slice = file.slice(offset, o + chunkSize);
+      fileReader.readAsArrayBuffer(slice);
+    };
+
+    readSlice(0);
+  }
+
   onReceiveMessageCallback(data: ArrayBuffer): void {
     this.receiveBuffer.push(data);
     this.receivedSize += data.byteLength;
@@ -304,6 +320,20 @@ export class PeerImpl implements Peer {
     tracks.forEach((t) => (t.enabled = !t.enabled));
 
     this.uiState.video = !this.uiState.video;
+  }
+
+  toggle(stream: MediaStream, kind: keyof PeerUiState = 'video') {
+    let tracks: MediaStreamTrack[];
+
+    if (kind === 'video') {
+      tracks = stream.getVideoTracks();
+    } else {
+      tracks = stream.getAudioTracks();
+    }
+
+    tracks.forEach((t) => (t.enabled = !t.enabled));
+
+    this.uiState[kind] = !this.uiState[kind];
   }
 
   errorHandler(error: RTCPeerConnectionIceErrorEvent): void {

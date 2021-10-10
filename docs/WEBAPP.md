@@ -87,6 +87,8 @@ export class MeetRoutingModule {}
 
 ### Importando app routing
 
+Arquivo `apps/webapp/src/app/app.module.ts`
+
 ```ts
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
@@ -109,3 +111,14 @@ export class AppModule {}
 ```sh
 nx run-many --target=serve --all --parallel --max-parallel=2
 ```
+
+
+<center>
+
+[Gateway &nbsp; 🔙 ](./GATEWAY.md) - [ 🔜 &nbsp; Web App 2](./WEBAPP-2.md)
+
+</center>
+
+---
+
+[Guilherme Visi Siquinelli](https://guiseek.dev) &copy; 2021

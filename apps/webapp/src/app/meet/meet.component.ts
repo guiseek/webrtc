@@ -22,22 +22,26 @@ export class MeetComponent implements OnInit {
     const { meet } = this.route.snapshot.params;
     if (meet) this.meet = meet;
     else this.meet = '';
-
-    this.peer.on('stream', console.log);
-    this.peer.on('progress', (progress) => {
-      console.log(progress);
-      const { percent } = progress;
-      this._progress.next(percent);
-    });
   }
 
   ngOnInit(): void {
     this.peer.connect(this.meet);
+    this.peer.event.on('progress', ({ percent }) => {
+      this._progress.next(percent);
+    });
+
+    this.peer.event.on('dataChannel', (channel) => {
+      console.log('RTC Data Channel: ', channel);
+      setTimeout(() => this.peer.send('obaaaa'), 10000);
+    })
+
+    this.peer.event.on('message', (message) => {
+      console.log('message: ', message);
+    })
   }
 
   end() {
     this.peer.close();
-
     this._router.navigate(['/']);
   }
 }

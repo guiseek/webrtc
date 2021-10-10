@@ -21,6 +21,8 @@ nx g class app-providers --project webapp --skip-tests
 
 ### Relacionando ports e adapters como providers
 
+Arquivo `apps/webapp/src/app/app-providers.ts`
+
 ```ts
 import { PeerImpl, SignalingImpl } from '@webrtc/adapters';
 import { Peer, Signaling, Socket } from '@webrtc/ports';
@@ -54,6 +56,8 @@ export class AppProviders {
 
 ### Adicionando configuração do ambiente
 
+Arquivo `apps/webapp/src/environments/environment.ts`
+
 ```ts
 export const environment: {
   production: boolean;
@@ -74,6 +78,8 @@ export const environment: {
 ```
 
 ### Importando providers
+
+Arquivo `apps/webapp/src/app/app.module.ts`
 
 ```ts
 @NgModule({
@@ -323,3 +329,14 @@ Arquivo `apps/webapp/src/app/home/home.component.scss`
   }
 }
 ```
+
+
+<center>
+
+[Web App &nbsp; 🔙 ](./WEBAPP.md) - [ 🔜 &nbsp; Web App 3](./WEBAPP-3.md)
+
+</center>
+
+---
+
+[Guilherme Visi Siquinelli](https://guiseek.dev) &copy; 2021

@@ -11,12 +11,12 @@
   ></video>
 
   <footer>
-    <button type="button" (click)="peer.toggleVideo(peer.stream)">
+    <button type="button" (click)="peer.toggle(peer.stream, 'video')">
       <i class="material-icons">
         {{ peer.uiState.video ? 'videocam_off' : 'videocam' }}
       </i>
     </button>
-    <button type="button" (click)="peer.toggleAudio(peer.stream)">
+    <button type="button" (click)="peer.toggle(peer.stream, 'audio')">
       <i class="material-icons">
         {{ peer.uiState.audio ? 'mic_off' : 'mic' }}
       </i>

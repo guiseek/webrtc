@@ -248,3 +248,14 @@ Arquivo `apps/webapp/src/app/meet/meet.component.html`
   <progress [value]="peer.progress$ | async" max="100"></progress>
 </div>
 ```
+
+
+<center>
+
+[Web App 2 &nbsp; 🔙 ](./WEBAPP-2.md)
+
+</center>
+
+---
+
+[Guilherme Visi Siquinelli](https://guiseek.dev) &copy; 2021

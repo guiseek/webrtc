@@ -1,3 +1,4 @@
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 
@@ -10,7 +11,7 @@ import { AppProviders } from './app-providers';
 
 @NgModule({
   declarations: [AppComponent, HomeComponent],
-  imports: [BrowserModule, AppRoutingModule, ReactiveFormsModule],
+  imports: [BrowserModule, AppRoutingModule, BrowserAnimationsModule, ReactiveFormsModule],
   providers: [AppProviders.forPorts(environment)],
   bootstrap: [AppComponent],
 })

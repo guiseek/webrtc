@@ -1,8 +1,9 @@
 import { EventEmitter, PeerUiState, SignalMessage } from './interfaces';
-import { Callback, PeerEventMap } from './types';
+import { DataTransfer, DataTransferMap } from './data-transfer';
+import { PeerEventMap } from './types';
 
 export abstract class Peer {
-  abstract uuid?: string;
+  abstract user: string;
   abstract meet?: string;
 
   abstract uiState: PeerUiState;
@@ -13,15 +14,9 @@ export abstract class Peer {
   abstract conn: RTCPeerConnection;
 
   abstract receiveBuffer: ArrayBuffer[];
-  public abstract receivedSize: number;
-  // public abstract progress$: Observable<number>;
+  abstract receivedSize: number;
 
   abstract readonly event: EventEmitter<PeerEventMap>;
-
-  public abstract on<K extends keyof PeerEventMap>(
-    key: K,
-    fn: Callback<PeerEventMap[K]>
-  ): void;
 
   public abstract connect(uuid?: string): void;
 
@@ -29,9 +24,7 @@ export abstract class Peer {
 
   public abstract upload(message: File): void;
 
-  abstract signalUp(): Promise<void>;
-
-  abstract listen(): void;
+  abstract openChannel(fn: (channel: DataTransfer<DataTransferMap>) => void): void
 
   abstract gotStream(): (stream: MediaStream) => void;
 
@@ -43,9 +36,7 @@ export abstract class Peer {
 
   abstract onReceiveMessageCallback(data: ArrayBuffer): void;
 
-  abstract toggleAudio(stream: MediaStream): void;
-
-  abstract toggleVideo(stream: MediaStream): void;
+  abstract toggle(stream: MediaStream, uiState: keyof PeerUiState): void;
 
   abstract errorHandler(error: Event): void;
 

@@ -17,7 +17,7 @@ Arquivo `libs/ports/src/lib/types/peer-event-map.ts`
 export type PeerEventMap = {
   /**
    * A nova mídia de entrada foi negociada para um
-   * determinado RTCRtpReceivere esse receptor track foi
+   * determinado RTCRtpReceiver e esse receptor track foi
    * adicionado a quaisquer MediaStreams remotos associados.
    */
   track: MediaStreamTrack;
@@ -40,7 +40,7 @@ export type PeerEventMap = {
   connectionChange: RTCPeerConnectionState;
 
   /**
-   * Um novo RTCIceCandidateé disponibilizado para o script.
+   * Um novo RTCIceCandidate está disponível.
    */
   iceCandidateChange: RTCIceCandidate;
 
@@ -245,3 +245,13 @@ export * from './lib/enums';
 export * from './lib/types';
 export * from './lib/peer';
 ```
+
+<center>
+
+[ 🔜 &nbsp; Adapters ](./ADAPTERS.md)
+
+</center>
+
+---
+
+[Guilherme Visi Siquinelli](https://guiseek.dev) &copy; 2021
