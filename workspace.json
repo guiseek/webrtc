@@ -14,7 +14,7 @@
             "tsConfig": "libs/adapters/tsconfig.lib.json",
             "packageJson": "libs/adapters/package.json",
             "main": "libs/adapters/src/index.ts",
-            "assets": ["libs/adapters/*.md"]
+            "assets": ["libs/adapters/*.md", "libs/adapters/LICENSE"]
           }
         },
         "lint": {
@@ -104,7 +104,7 @@
             "tsConfig": "libs/ports/tsconfig.lib.json",
             "packageJson": "libs/ports/package.json",
             "main": "libs/ports/src/index.ts",
-            "assets": ["libs/ports/*.md"]
+            "assets": ["libs/ports/*.md", "libs/ports/LICENSE"]
           }
         },
         "lint": {
