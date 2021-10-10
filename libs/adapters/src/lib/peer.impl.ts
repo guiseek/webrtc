@@ -1,5 +1,7 @@
+import { DataTransferImpl } from './data-transfer.impl';
 import { EventEmitterImpl } from './event-emitter.impl';
 import { getPercentage } from './utils/get-percentage';
+import { uuid } from './utils/uuid';
 import {
   Peer,
   Socket,
@@ -7,15 +9,7 @@ import {
   PeerUiState,
   SignalMessage,
 } from '@webp2p/ports';
-import { DataTransferImpl } from './data-transfer.impl';
 
-export function uuid() {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
-    const r = (Math.random() * 16) | 0;
-    const v = c == 'x' ? r : (r & 0x3) | 0x8;
-    return v.toString(16);
-  });
-}
 
 export class PeerImpl implements Peer {
   user: string;
@@ -311,8 +305,10 @@ export class PeerImpl implements Peer {
   toggleAudio(stream: MediaStream) {
     const tracks = stream.getAudioTracks();
     tracks.forEach((t) => (t.enabled = !t.enabled));
-
     this.uiState.audio = !this.uiState.audio;
+    
+    const events = this.event.get('toggleAudio');
+    events.map((fn) => fn(this.uiState.audio));
   }
 
   toggleVideo(stream: MediaStream) {
@@ -320,6 +316,9 @@ export class PeerImpl implements Peer {
     tracks.forEach((t) => (t.enabled = !t.enabled));
 
     this.uiState.video = !this.uiState.video;
+
+    const events = this.event.get('toggleVideo');
+    events.map((fn) => fn(this.uiState.video));
   }
 
   toggle(stream: MediaStream, kind: keyof PeerUiState = 'video') {
