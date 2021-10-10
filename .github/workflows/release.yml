@@ -4,25 +4,40 @@ on:
   push:
     branches:
       - main
-
-env:
-  CI: true
-
 jobs:
-  release:
+  build:
     name: Build, Release & Publish
     if: "!contains(github.event.head_commit.message, 'skip ci')"
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Project
-        uses: actions/checkout@v1
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
 
-      - name: Install Dependencies
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '12'
+
+      - name: Cache dependencies
+        uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Fetch main
+        run: git fetch origin main
+
+      - name: Install dependencies
         run: npm ci
 
       - uses: mansagroup/nrwl-nx-action@v2
         with:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
           targets: lint,build,release
           projects: ports,adapters
+          args: '--skip-nx-cache'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
