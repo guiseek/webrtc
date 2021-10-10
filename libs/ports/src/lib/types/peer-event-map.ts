@@ -61,4 +61,8 @@ export type PeerEventMap = {
    * usando DataChannel, úteis para progresso
    */
   progress: DataProgress;
+
+  toggleAudio: boolean;
+
+  toggleVideo: boolean;
 };

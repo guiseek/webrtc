@@ -36,6 +36,10 @@ export abstract class Peer {
 
   abstract onReceiveMessageCallback(data: ArrayBuffer): void;
 
+  abstract toggleVideo(stream: MediaStream): void;
+  
+  abstract toggleAudio(stream: MediaStream): void;
+
   abstract toggle(stream: MediaStream, uiState: keyof PeerUiState): void;
 
   abstract errorHandler(error: Event): void;
