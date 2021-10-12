@@ -1,17 +1,23 @@
-import { injector } from './app.providers';
+import { environment } from '../environments/environment';
+import { Dialog } from '@material/mwc-dialog';
+import { loadModule } from './app.providers';
 import { Peer } from '@webp2p/ports';
+
+import '@material/mwc-textfield';
+import '@material/mwc-button';
+import '@material/mwc-dialog';
 
 import './app.element.scss';
 
-export class AppElement extends HTMLElement {
-  public static observedAttributes = [];
+const injector = loadModule(environment);
 
+export class AppElement extends HTMLElement {
   meetId: string;
 
   peer = injector.get<Peer>(Peer);
 
   innerHTML = `
-    <main>
+    <main class="hidden">
       <section class="container" id="remote">
         <video autoplay playsinline></video>
       </section>
@@ -55,7 +61,25 @@ export class AppElement extends HTMLElement {
         <progress value="0" max="100"></progress>
       </div>
     </main>
+
+    <mwc-dialog id="dialog" heading="Acessar uma reunião">
+      <p>Nome ou código da sala</p>
+      <mwc-textfield
+        id="text-field"
+        minlength="6"
+        maxlength="64"
+        placeholder="Digite aqui..."
+        required>
+      </mwc-textfield>
+      <mwc-button
+        id="primary-button"
+        slot="primaryAction">
+        Confirmar
+      </mwc-button>
+    </mwc-dialog>
   `;
+
+  main: HTMLElement;
 
   local: HTMLElement;
   remote: HTMLElement;
@@ -66,7 +90,12 @@ export class AppElement extends HTMLElement {
   audio: HTMLButtonElement;
   inputFile: HTMLInputElement;
 
+  dialog: Dialog;
+  textField: HTMLInputElement;
+  primaryButton: HTMLButtonElement;
+
   connectedCallback() {
+    this.main = this.querySelector('main');
     this.local = this.querySelector('#local');
     this.remote = this.querySelector('#remote');
     this.download = this.querySelector('#download');
@@ -76,11 +105,20 @@ export class AppElement extends HTMLElement {
     this.upload = this.querySelector('#upload');
     this.inputFile = this.querySelector('#inputFile');
 
+    this.dialog = this.querySelector('#dialog');
+    this.textField = this.querySelector('#text-field');
+    this.primaryButton = this.querySelector('#primary-button');
+
     const params = this.getParams(location);
     const meetId = params.get('meetId');
 
-    if (meetId) this.meetId = meetId;
-    else this.meetId = '';
+    if (meetId) {
+      this.meetId = meetId;
+      this.main.classList.remove('hidden');
+    } else {
+      this.meetId = '';
+      this.dialog.show();
+    }
 
     this.onInit();
   }
@@ -105,6 +143,15 @@ export class AppElement extends HTMLElement {
     this.handleAudio();
     this.handleVideo();
     this.handleUpload();
+    this.handleConfirm();
+  }
+
+  handleConfirm() {
+    this.primaryButton.onclick = () => {
+      const isValid = this.textField.checkValidity();
+      if (isValid) this.goToMeet();
+      else this.textField.reportValidity();
+    };
   }
 
   handleAudio() {
@@ -139,6 +186,11 @@ export class AppElement extends HTMLElement {
         this.peer.upload(files.item(0));
       }
     };
+  }
+
+  goToMeet() {
+    const { value } = this.textField;
+    location.href = `?meetId=${value}`;
   }
 
   getParams({ search }: Location) {

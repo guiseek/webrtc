@@ -9,6 +9,9 @@
 //   margin: 50px auto;
 // }
 
+mwc-textfield {
+  width: 100%;
+}
 
 main {
   flex: 1;
@@ -37,16 +40,15 @@ body > *:first-child {
   background-repeat: no-repeat;
   background-size: 100%;
   background-color: #232933;
-  // flex: 1;
-  // padding: 20px;
-  // display: flex;
-  // align-items: center;
-  // flex-direction: column;
-  // justify-content: center;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .container {
-  padding: 0px;
+  margin: 20px;
   width: 100%;
   max-width: 1920px;
   max-height: 1080px;
@@ -114,14 +116,6 @@ section#remote {
   }
 }
 
-.hidden {
-  display: none;
-}
-
-.visible {
-  display: flex;
-}
-
 section#local {
   max-width: 200px;
   position: fixed;
@@ -171,4 +165,12 @@ section#local {
   position: fixed;
   right: 20px;
   bottom: 20px;
+}
+
+.hidden {
+  display: none;
+}
+
+.visible {
+  display: flex;
 }
