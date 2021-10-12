@@ -1,6 +1,7 @@
 import { environment } from '../environments/environment';
 import { Dialog } from '@material/mwc-dialog';
 import { loadModule } from './app.providers';
+import { URLJoin } from './app.utils';
 import { Peer } from '@webp2p/ports';
 
 import '@material/mwc-textfield';
@@ -49,11 +50,11 @@ export class AppElement extends HTMLElement {
       <input
         type="file"
         name="files"
-        id="inputFile"
+        id="input-file"
         multiple="false"
       />
       
-      <button class="call-end" (click)="end()">
+      <button id="call-end" (click)="end()">
         <i class="material-icons">call_end</i>
       </button>
       
@@ -62,7 +63,22 @@ export class AppElement extends HTMLElement {
       </div>
     </main>
 
-    <mwc-dialog id="dialog" heading="Acessar uma reunião">
+    <mwc-dialog id="dialog-confirm" heading="Atenção">
+      <div>A conexão ainda está ativa. <br /> Ainda sim quer sair da sala?</div>
+      <mwc-button
+          id="confirm-submit"
+          slot="primaryAction"
+          dialogAction="discard">
+        Sim, sair
+      </mwc-button>
+      <mwc-button
+          slot="secondaryAction"
+          dialogAction="cancel">
+        Cancelar
+      </mwc-button>
+    </mwc-dialog>
+
+    <mwc-dialog id="dialog-form" heading="Acessar uma reunião">
       <p>Nome ou código da sala</p>
       <mwc-textfield
         id="text-field"
@@ -72,7 +88,7 @@ export class AppElement extends HTMLElement {
         required>
       </mwc-textfield>
       <mwc-button
-        id="primary-button"
+        id="form-submit"
         slot="primaryAction">
         Confirmar
       </mwc-button>
@@ -88,11 +104,15 @@ export class AppElement extends HTMLElement {
   upload: HTMLButtonElement;
   video: HTMLButtonElement;
   audio: HTMLButtonElement;
+  endCall: HTMLButtonElement;
   inputFile: HTMLInputElement;
 
-  dialog: Dialog;
+  dialogForm: Dialog;
   textField: HTMLInputElement;
-  primaryButton: HTMLButtonElement;
+  formSubmit: HTMLButtonElement;
+
+  dialogConfirm: Dialog;
+  confirmSubmit: HTMLButtonElement;
 
   connectedCallback() {
     this.main = this.querySelector('main');
@@ -103,11 +123,14 @@ export class AppElement extends HTMLElement {
     this.video = this.querySelector('#video');
     this.audio = this.querySelector('#audio');
     this.upload = this.querySelector('#upload');
-    this.inputFile = this.querySelector('#inputFile');
+    this.endCall = this.querySelector('#call-end');
+    this.inputFile = this.querySelector('#input-file');
 
-    this.dialog = this.querySelector('#dialog');
     this.textField = this.querySelector('#text-field');
-    this.primaryButton = this.querySelector('#primary-button');
+    this.dialogForm = this.querySelector('#dialog-form');
+    this.formSubmit = this.querySelector('#form-submit');
+    this.confirmSubmit = this.querySelector('#confirm-submit');
+    this.dialogConfirm = this.querySelector('#dialog-confirm');
 
     const params = this.getParams(location);
     const meetId = params.get('meetId');
@@ -117,7 +140,7 @@ export class AppElement extends HTMLElement {
       this.main.classList.remove('hidden');
     } else {
       this.meetId = '';
-      this.dialog.show();
+      this.dialogForm.show();
     }
 
     this.onInit();
@@ -144,13 +167,23 @@ export class AppElement extends HTMLElement {
     this.handleVideo();
     this.handleUpload();
     this.handleConfirm();
+    this.handleEndCall();
   }
 
   handleConfirm() {
-    this.primaryButton.onclick = () => {
+    this.formSubmit.onclick = () => {
       const isValid = this.textField.checkValidity();
       if (isValid) this.goToMeet();
       else this.textField.reportValidity();
+    };
+  }
+
+  handleEndCall() {
+    this.endCall.onclick = () => {
+      this.dialogConfirm.show();
+      this.confirmSubmit.onclick = () => {
+        location.href = location.origin;
+      };
     };
   }
 
@@ -189,8 +222,11 @@ export class AppElement extends HTMLElement {
   }
 
   goToMeet() {
+    const domain = location.origin;
     const { value } = this.textField;
-    location.href = `?meetId=${value}`;
+    const params = `?meetId=${value}`;
+    const url = URLJoin(domain, params);
+    location.href = url;
   }
 
   getParams({ search }: Location) {

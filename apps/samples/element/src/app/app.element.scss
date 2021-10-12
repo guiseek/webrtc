@@ -103,7 +103,7 @@ video {
   max-width: 100%;
 }
 
-input[type='file'] {
+#input-file {
   display: none;
 }
 
@@ -146,7 +146,7 @@ section#local {
   }
 }
 
-.call-end {
+#call-end {
   width: 64px;
   height: 64px;
 
