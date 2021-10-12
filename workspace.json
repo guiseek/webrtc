@@ -57,6 +57,7 @@
             "tsConfig": "apps/element/tsconfig.app.json",
             "assets": [
               "apps/element/src/favicon.ico",
+              "apps/element/src/CNAME",
               "apps/element/src/assets"
             ],
             "styles": ["apps/element/src/styles.scss"],
