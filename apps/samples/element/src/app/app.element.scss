@@ -1,0 +1,176 @@
+/*
+ * Remove template code below
+ */
+// body > *:first-child {
+//   display: block;
+//   font-family: sans-serif;
+//   min-width: 300px;
+//   max-width: 600px;
+//   margin: 50px auto;
+// }
+
+mwc-textfield {
+  width: 100%;
+}
+
+main {
+  flex: 1;
+  width: 100%;
+  display: flex;
+
+  margin: 0;
+  font-size: 1.4rem;
+  font-family: 'Source Sans Pro', sans-serif;
+
+  background-image: url(https://codecon.dev/sand.png);
+  background-repeat: no-repeat;
+  background-position: bottom;
+  background-size: 100%;
+}
+
+body > *:first-child {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  background-image: url(https://codecon.dev/dark-city.png);
+  background-repeat: no-repeat;
+  background-size: 100%;
+  background-color: #232933;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.container {
+  margin: 20px;
+  width: 100%;
+  max-width: 1920px;
+  max-height: 1080px;
+  display: flex;
+  object-fit: contain;
+  flex-direction: column;
+  border-radius: 12px;
+  background-color: rgba(255, 255, 255, 0.8);
+}
+
+section {
+  padding: 0;
+  overflow: hidden;
+  border-radius: 8px;
+
+  background-color: white;
+
+  &.videoff {
+    transition: background-color 250ms ease-in-out;
+
+    background-color: rgba(255, 255, 255, 0.2);
+
+    video {
+      opacity: 0;
+      transition: opacity 250ms ease-in-out;
+    }
+
+    footer {
+      opacity: 0.6;
+      transition: opacity 250ms ease-in-out;
+    }
+  }
+}
+
+.progress {
+  top: 0;
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  progress {
+    width: 50%;
+    height: 64px;
+  }
+}
+
+video {
+  width: 100%;
+  max-width: 100%;
+}
+
+input[type='file'] {
+  display: none;
+}
+
+section#remote {
+  video {
+    width: 100%;
+    max-width: 100%;
+    border-radius: 12px;
+    margin-bottom: -6px;
+  }
+}
+
+section#local {
+  max-width: 200px;
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  z-index: 10;
+
+  & > footer {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    margin-bottom: 0;
+    justify-content: space-between;
+
+    background-color: white;
+
+    opacity: 0.6;
+    transition: opacity 250ms ease-in-out;
+
+    &:hover {
+      opacity: 1;
+    }
+
+    button {
+      width: 33%;
+      background-color: transparent;
+    }
+  }
+}
+
+.call-end {
+  width: 64px;
+  height: 64px;
+
+  i {
+    font-size: 32px;
+    line-height: 32px;
+  }
+
+  border-radius: 50%;
+  display: flex;
+  color: white;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  background-color: red;
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+}
+
+.hidden {
+  display: none;
+}
+
+.visible {
+  display: flex;
+}
