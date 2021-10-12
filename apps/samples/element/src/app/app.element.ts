@@ -23,7 +23,7 @@ export class AppElement extends HTMLElement {
         <video autoplay playsinline></video>
       </section>
       
-      <section id="local" [ngClass]="{ videoff: peer.uiState.video }">
+      <section id="local">
         <video
           autoplay
           playsinline
@@ -54,17 +54,21 @@ export class AppElement extends HTMLElement {
         multiple="false"
       />
       
-      <button id="call-end" (click)="end()">
+      <button id="call-end">
         <i class="material-icons">call_end</i>
       </button>
       
-      <div id="download" class="progress hidden">
+      <div id="download" class="hidden">
         <progress value="0" max="100"></progress>
       </div>
     </main>
 
     <mwc-dialog id="dialog-confirm" heading="Atenção">
-      <div>A conexão ainda está ativa. <br /> Ainda sim quer sair da sala?</div>
+      <div>
+        A conexão ainda está ativa.
+        <br />
+        Ainda sim quer sair da sala?
+      </div>
       <mwc-button
           id="confirm-submit"
           slot="primaryAction"
@@ -160,7 +164,12 @@ export class AppElement extends HTMLElement {
     this.peer.connect(this.meetId);
     const progress = this.getProgress(this.download);
     this.peer.event.on('progress', ({ percent }) => {
-      progress.setAttribute('value', `${percent}%`);
+      if (+percent.toFixed(0) === 0) {
+        this.download.classList.add('hidden');
+      } else {
+        this.download.classList.remove('hidden');
+      }
+      progress.setAttribute('value', percent.toFixed(0));
     });
 
     this.handleAudio();

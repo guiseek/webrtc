@@ -1,14 +1,3 @@
-/*
- * Remove template code below
- */
-// body > *:first-child {
-//   display: block;
-//   font-family: sans-serif;
-//   min-width: 300px;
-//   max-width: 600px;
-//   margin: 50px auto;
-// }
-
 mwc-textfield {
   width: 100%;
 }
@@ -16,11 +5,14 @@ mwc-textfield {
 main {
   flex: 1;
   width: 100%;
-  display: flex;
-
+  
   margin: 0;
   font-size: 1.4rem;
   font-family: 'Source Sans Pro', sans-serif;
+  
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
   background-image: url(https://codecon.dev/sand.png);
   background-repeat: no-repeat;
@@ -50,6 +42,9 @@ body > *:first-child {
 .container {
   margin: 20px;
   width: 100%;
+  width: 1280px;
+  height: auto;
+  // height: 720px;
   max-width: 1920px;
   max-height: 1080px;
   display: flex;
@@ -83,7 +78,7 @@ section {
   }
 }
 
-.progress {
+#download {
   top: 0;
   position: fixed;
   width: 100vw;
@@ -91,6 +86,10 @@ section {
   display: flex;
   justify-content: center;
   align-items: center;
+
+  &.hidden {
+    display: none;
+  }
 
   progress {
     width: 50%;
