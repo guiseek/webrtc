@@ -30,13 +30,13 @@
     "adapters": {
       "tags": []
     },
+    "element": {
+      "tags": []
+    },
     "gateway": {
       "tags": []
     },
     "ports": {
-      "tags": []
-    },
-    "samples-element": {
       "tags": []
     },
     "webapp": {
