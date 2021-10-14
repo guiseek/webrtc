@@ -4,7 +4,7 @@
   "license": "MIT",
   "scripts": {
     "nx": "nx",
-    "start": "nx serve",
+    "start": "nx run-many --target serve --projects=gateway,element --max-parallel=2",
     "build": "nx build",
     "test": "nx test",
     "format:check": "nx format:check",
@@ -12,7 +12,8 @@
     "ports:release": "nx run ports:release",
     "affected:lint": "nx affected:lint",
     "affected:build": "nx affected:build",
-    "postinstall": "ngcc --properties es2015 browser module main"
+    "postinstall": "ngcc --properties es2015 browser module main",
+    "commit": "cz"
   },
   "private": true,
   "dependencies": {
@@ -35,6 +36,8 @@
     "@nestjs/platform-socket.io": "^8.0.6",
     "@nestjs/websockets": "^8.0.6",
     "@nx-clean/core": "^1.1.0",
+    "@webp2p/adapters": "^1.1.0",
+    "@webp2p/ports": "^1.1.0",
     "core-js": "^3.6.5",
     "reflect-metadata": "^0.1.13",
     "regenerator-runtime": "0.13.7",
@@ -71,6 +74,7 @@
     "@typescript-eslint/parser": "~4.28.3",
     "copy-webpack-plugin": "^9.0.1",
     "cypress": "^8.3.0",
+    "cz-conventional-changelog": "^3.3.0",
     "eslint": "7.22.0",
     "eslint-config-prettier": "8.1.0",
     "jest": "27.0.3",
@@ -88,5 +92,10 @@
     "webpack-merge": "^5.8.0",
     "webpack-node-externals": "^3.0.0",
     "webpack-sources": "^3.0.2"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
   }
 }
