@@ -4,6 +4,7 @@
     "outDir": "../../dist/out-tsc",
     "declaration": true,
     "types": [],
+    "module": "CommonJS",
     "forceConsistentCasingInFileNames": true,
     "strict": true,
     "noImplicitReturns": true,
